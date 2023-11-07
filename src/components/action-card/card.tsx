@@ -66,15 +66,7 @@ function ActionCard(props: any) {
             {data.labels.map((x) => {
               return (
                 <option key={x.id} value={x.id}>
-                  <div>
-                    {x.text}
-                    <Circle
-                      fontSize="18px"
-                      color={x.color + '19'}
-                      fill={x.color + '19'}
-                    ></Circle>
-                    &nbsp;
-                  </div>
+                  {x.text}
                 </option>
               );
             })}

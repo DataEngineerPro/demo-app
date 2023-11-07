@@ -7,7 +7,7 @@ function LabelsComponent() {
   return (
     <>
       {data.labels.map((x) => (
-        <div>
+        <div key={x.id}>
           <Circle fontSize="18px" color={x.color} fill={x.color}></Circle>&nbsp;
           {x.text}
         </div>

@@ -162,6 +162,7 @@ function Canvas(props: any) {
     } else if (e.keyCode === 8 && selectedRect) {
       removeRect({ rect: selectedRect });
       setSelectedRect(null);
+      setContextRect(null);
     }
   };
 
@@ -224,8 +225,8 @@ function Canvas(props: any) {
                         width={x.rect.width * aspectWidth}
                         height={x.rect.height * aspectHeight}
                         fill={data.labels.find((l) => x.label === l.id).color}
-                        opacity={x.isSelected || x.label === -1 ? 1 : 0.1}
-                        fillEnabled={!x.isSelected}
+                        opacity={x.label === -1 ? 1 : 0.1}
+                        fillEnabled={true}
                         shadowBlur={2}
                         dash={[2, 2]}
                         stroke={data.labels.find((l) => x.label === l.id).color}
