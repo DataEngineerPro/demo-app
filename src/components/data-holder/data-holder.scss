@@ -1,0 +1,14 @@
+.icon {
+  height: 16px;
+  width: 16px;
+}
+.text-container {
+  display: flex;
+  flex-grow: 1;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.pointer {
+  cursor: pointer;
+}
