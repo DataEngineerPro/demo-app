@@ -57,6 +57,7 @@ const selectRect = (
   const { rect, isSelected } = payload;
   const index = state.rects.findIndex((item) => item.id === rect.id);
   const rects = [...state.rects];
+  if (!rects[index]) return state;
   rects[index].isSelected = isSelected;
   return {
     ...state,
@@ -73,6 +74,25 @@ const removeRect = (state: ICanvasStateType, payload: { rect: IRect }) => {
   };
 };
 
+const addLabel = (
+  state: ICanvasStateType,
+  payload: { label: Partial<ILabel> }
+) => {
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  console.log(randomColor);
+  return {
+    ...state,
+    labels: [
+      ...state.labels,
+      {
+        id: state.labels.length + 1,
+        color: '#' + randomColor,
+        text: payload.label.text,
+      },
+    ],
+  };
+};
+
 export const reducer = (state: ICanvasStateType, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_INITIAL_DATA:
@@ -85,6 +105,8 @@ export const reducer = (state: ICanvasStateType, action: Action) => {
       return selectRect(state, action.payload);
     case ActionTypes.REMOVE_RECT:
       return removeRect(state, action.payload);
+    case ActionTypes.ADD_LABEL:
+      return addLabel(state, action.payload);
     default:
       return state;
   }

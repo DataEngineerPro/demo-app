@@ -5,6 +5,7 @@ import { useCanvasContext } from '../canvas/context/context';
 import { useEffect, useState } from 'react';
 import './card.scss';
 import { Circle } from 'react-feather';
+import { CardBody, CardText } from 'react-bootstrap';
 
 function ActionCard(props: any) {
   if (!props || !props.rect) return;
@@ -47,39 +48,57 @@ function ActionCard(props: any) {
 
   return (
     <Card style={{ width: '18rem' }} onClick={stop}>
-      <Card.Body>
-        <Card.Text>
-          <Form.Label htmlFor="inputPassword5">Text</Form.Label>
-          <Form.Control
-            type="text"
-            id="inputPassword5"
-            value={textValue}
-            onChange={(e) => setTextValue(e.target.value)}
-          />
-          <Form.Label htmlFor="select">Label</Form.Label>
-          <Form.Select
-            id="select"
-            aria-label="Please select label"
-            defaultValue={labelValue}
-            onChange={labelChange}
+      {props.rect.label > -1 && (
+        <Card.Body>
+          <Card.Text>
+            <Form.Label htmlFor="inputPassword5">Text</Form.Label>
+            <Form.Control
+              type="text"
+              id="inputPassword5"
+              value={props.rect.label === 0 ? 'Processing...' : textValue}
+              onChange={(e) => setTextValue(e.target.value)}
+              disabled={props.rect.label === 0}
+            />
+            <Form.Label htmlFor="select">Label</Form.Label>
+            <Form.Select
+              id="select"
+              aria-label="Please select label"
+              defaultValue={labelValue}
+              onChange={labelChange}
+              disabled={props.rect.label === 0}
+            >
+              {data.labels
+                .filter((x) => x.id === -1 || x.id > 1)
+                .map((x) => {
+                  return (
+                    <option key={x.id} value={x.id}>
+                      {x.text}
+                    </option>
+                  );
+                })}
+            </Form.Select>
+          </Card.Text>
+          <Button
+            variant="primary"
+            onClick={update}
+            disabled={props.rect.label === 0}
           >
-            {data.labels.map((x) => {
-              return (
-                <option key={x.id} value={x.id}>
-                  {x.text}
-                </option>
-              );
-            })}
-          </Form.Select>
-        </Card.Text>
-        <Button variant="primary" onClick={update}>
-          Update
-        </Button>
-        &nbsp;
-        <Button variant="danger" onClick={deleteRect}>
-          Delete
-        </Button>
-      </Card.Body>
+            Update
+          </Button>
+          &nbsp;
+          <Button variant="danger" onClick={deleteRect}>
+            Delete
+          </Button>
+        </Card.Body>
+      )}
+      {props.rect.label === -1 && (
+        <CardBody>
+          <CardText>
+            This text has been redacted. No operations can be performed on this
+            part of document for security purposes.
+          </CardText>
+        </CardBody>
+      )}
     </Card>
   );
 }

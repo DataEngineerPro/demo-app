@@ -10,6 +10,7 @@ import {
 import {
   CanvasContextProviderProps,
   CanvasContextReturnType,
+  ILabel,
   IRect,
 } from './contextType';
 import { reducer } from './reducer';
@@ -77,6 +78,15 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     });
   }, []);
 
+  const addLabel = useCallback((args: { label: Partial<ILabel> }) => {
+    dispatch({
+      type: ActionTypes.ADD_LABEL,
+      payload: {
+        label: args.label,
+      },
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       data,
@@ -85,8 +95,17 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
       addRect,
       selectRect,
       removeRect,
+      addLabel,
     }),
-    [data, setInitialData, updateValues, addRect, selectRect, removeRect]
+    [
+      data,
+      setInitialData,
+      updateValues,
+      addRect,
+      selectRect,
+      removeRect,
+      addLabel,
+    ]
   );
 
   return (

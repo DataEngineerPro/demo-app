@@ -8,6 +8,7 @@ export enum ActionTypes {
   SELECT_RECT = 'SELECT_RECT',
   REMOVE_RECT = 'REMOVE_RECT',
   UPDATE_RECT = 'UPDATE_RECT',
+  ADD_LABEL = 'ADD_LABEL',
 }
 
 interface SetInitialDataAction {
@@ -48,9 +49,17 @@ interface RemoveRectAction {
   };
 }
 
+interface AddLabel {
+  type: ActionTypes.ADD_LABEL;
+  payload: {
+    label: Partial<ILabel>;
+  };
+}
+
 export type Action =
   | SetInitialDataAction
   | UpdateLabelValueAction
   | AddRectAction
   | SelectRectAction
-  | RemoveRectAction;
+  | RemoveRectAction
+  | AddLabel;

@@ -9,6 +9,7 @@ import ActionCard from '../action-card/card';
 import './canvas.scss';
 import DataHolder from '../data-holder/data-holder';
 import LabelsComponent from '../labels/labels';
+import LabelStack from '../labels/label-stack';
 
 function Canvas(props: any) {
   const divRef = useRef<HTMLDivElement>(null);
@@ -178,7 +179,7 @@ function Canvas(props: any) {
     <>
       <div className="row">
         <div
-          className="col-6 border-1 border-dark p-0"
+          className="col-7 border-1 border-dark p-0"
           ref={divRef}
           onKeyDown={handleKeyBoard}
           onKeyUp={handleKeyBoard}
@@ -240,13 +241,17 @@ function Canvas(props: any) {
             </Stage>
           )}
         </div>
-        <div className="col-6 col-offset-1">
-          <h3>Reference Table</h3>
-          <DataHolder showContextMenu={showContextMenu} />
-
-          <h3>Labels Legend</h3>
-          <LabelsComponent></LabelsComponent>
+        <div className="col-4 offset-1 right-panel bg-light">
+          <h6>Identified Labels</h6>
+          <div className="data-holder">
+            <DataHolder showContextMenu={showContextMenu} />
+          </div>
+          <div className="label-holder">
+            <h6>Labels Legend</h6>
+            <LabelStack />
+          </div>
         </div>
+
         <div className="menu" ref={menuRef}>
           {contextRect && (
             <ActionCard rect={contextRect} close={closeContext}></ActionCard>
