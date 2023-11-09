@@ -22,8 +22,9 @@ function LabelStack() {
       {data.labels.map((x) => {
         return (
           <Button
+            key={x.id}
             variant="outline-dark"
-            style={{ backgroundColor: x.color + '80' }}
+            style={{ backgroundColor: x.color + '4D' }}
           >
             {x.text}{' '}
             <Badge
