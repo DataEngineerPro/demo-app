@@ -25,11 +25,7 @@ function Canvas(props: any) {
     setInitialData({
       rects: props.boundingBoxes,
       labels: props.labels,
-      document: {
-        url: '/assets/sample.png',
-        width: 2550,
-        height: 3301,
-      },
+      document: props.document,
     });
   }, []);
 

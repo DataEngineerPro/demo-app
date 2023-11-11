@@ -19,24 +19,26 @@ function LabelStack() {
   };
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
-      {data.labels.map((x) => {
-        return (
-          <Button
-            key={x.id}
-            variant="outline-dark"
-            style={{ backgroundColor: x.color + '4D' }}
-          >
-            {x.text}{' '}
-            <Badge
-              bg="none"
-              pill
-              style={{ backgroundColor: '#000', color: '#fff' }}
+      {data.labels
+        .filter((x) => x.id > 1)
+        .map((x) => {
+          return (
+            <Button
+              key={x.id}
+              variant="outline-dark"
+              style={{ backgroundColor: x.color + '4D' }}
             >
-              {data.rects.filter((r) => r.label === x.id).length}
-            </Badge>
-          </Button>
-        );
-      })}
+              {x.text}{' '}
+              <Badge
+                bg="none"
+                pill
+                style={{ backgroundColor: '#000', color: '#fff' }}
+              >
+                {data.rects.filter((r) => r.label === x.id).length}
+              </Badge>
+            </Button>
+          );
+        })}
       <InputGroup className="mb-3">
         <Form.Control
           placeholder="Add New Label"
