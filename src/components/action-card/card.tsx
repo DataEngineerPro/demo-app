@@ -57,7 +57,7 @@ function ActionCard(props: any) {
               id="inputPassword5"
               value={props.rect.label === 0 ? 'Processing...' : textValue}
               onChange={(e) => setTextValue(e.target.value)}
-              disabled={props.rect.label === 0}
+              // disabled={props.rect.label === 0}
             />
             <Form.Label htmlFor="select">Label</Form.Label>
             <Form.Select
@@ -65,7 +65,7 @@ function ActionCard(props: any) {
               aria-label="Please select label"
               defaultValue={labelValue}
               onChange={labelChange}
-              disabled={props.rect.label === 0}
+              // disabled={props.rect.label === 0}
             >
               {data.labels
                 .filter((x) => x.id === -1 || x.id > 1)
@@ -81,7 +81,7 @@ function ActionCard(props: any) {
           <Button
             variant="primary"
             onClick={update}
-            disabled={props.rect.label === 0}
+            // disabled={props.rect.label === 0}
           >
             Update
           </Button>

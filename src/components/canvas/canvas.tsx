@@ -8,8 +8,10 @@ import { IRect } from './context/contextType';
 import ActionCard from '../action-card/card';
 import './canvas.scss';
 import DataHolder from '../data-holder/data-holder';
-import LabelsComponent from '../labels/labels';
 import LabelStack from '../labels/label-stack';
+import ThubmnailSlider from '../thumbnail-slider/thubmnail-slider';
+import { Circle, Info } from 'react-feather';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Canvas(props: any) {
   const divRef = useRef<HTMLDivElement>(null);
@@ -22,6 +24,7 @@ function Canvas(props: any) {
     useCanvasContext();
 
   useEffect(() => {
+    console.log(props);
     setInitialData({
       rects: props.boundingBoxes,
       labels: props.labels,
@@ -63,7 +66,7 @@ function Canvas(props: any) {
       y: e.currentTarget.getPointerPosition().y,
     });
   };
-  const mouseup = (e: any) => {
+  const mouseup = async (e: any) => {
     e.evt.preventDefault();
     setListening(false);
     if (!tempRect) return;
@@ -73,15 +76,30 @@ function Canvas(props: any) {
       y: tempRect.y / aspectHeight,
       height: tempRect.height / aspectHeight,
     };
-    addRect({
-      rect: {
-        rect: newRect,
-      },
-    });
+    var params = new URLSearchParams();
+    params.append('id', sessionStorage.getItem(props.id));
+    params.append('x', newRect.x);
+    params.append('x', newRect.y);
+    params.append('width', newRect.width);
+    params.append('height', newRect.height);
+    await fetch(import.meta.env.VITE_API_PREFIX + 'upload_bbox_info', {
+      method: 'POST',
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        console.log(data);
+        addRect({
+          rect: {
+            rect: newRect,
+            text: data.text,
+          },
+        });
+        setTempRect(null);
+        setOriginalCords(null);
+        setNewCords(null);
+      });
+
     console.log(tempRect, newRect);
-    setTempRect(null);
-    setOriginalCords(null);
-    setNewCords(null);
   };
   const mousemove = (e: any) => {
     e.evt.preventDefault();
@@ -151,6 +169,19 @@ function Canvas(props: any) {
     }, 300);
   };
 
+  const tooltip = (
+    <Tooltip id="tooltip">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu lorem
+      vitae odio ultricies ullamcorper eget eu mauris. Nulla ultricies purus non
+      ornare tempor. Nam dignissim nibh et eleifend placerat. Cras tempus magna
+      arcu, id congue sapien rutrum ac. Nunc commodo mattis enim, sit amet
+      volutpat mi volutpat non. Nulla sit amet fringilla massa, in ultrices dui.
+      Aenean gravida pellentesque fermentum. Ut egestas, mi ut suscipit laoreet,
+      lorem orci euismod risus, maximus malesuada lacus est at purus. Nunc eu
+      tellus justo. Mauris ultrices auctor viverra. Vivamus sit amet ligula
+      metus. Ut molestie auctor consectetur.
+    </Tooltip>
+  );
   const handleKeyBoard = (e: any) => {
     e.preventDefault();
     if (e.keyCode === 27 && isListening) {
@@ -174,8 +205,11 @@ function Canvas(props: any) {
   return (
     <>
       <div className="row">
+        <div className="col-1 left-panel">
+          <ThubmnailSlider></ThubmnailSlider>
+        </div>
         <div
-          className="col-7 border-1 border-dark p-0"
+          className="ms-3 col-7 border-1 border-dark p-0"
           ref={divRef}
           onKeyDown={handleKeyBoard}
           onKeyUp={handleKeyBoard}
@@ -237,13 +271,30 @@ function Canvas(props: any) {
             </Stage>
           )}
         </div>
-        <div className="col-4 offset-1 right-panel bg-light">
-          <h6>Identified Labels</h6>
+        <div className="col ms-3 right-panel bg-light">
+          <div className="d-flex flex-row align-items-baseline">
+            <h6>Identified Labels</h6>
+            <OverlayTrigger placement="right" overlay={tooltip}>
+              <div className="px-1">
+                <Info size={16} fill="black" color="white"></Info>
+              </div>
+            </OverlayTrigger>
+          </div>
           <div className="data-holder">
-            <DataHolder showContextMenu={showContextMenu} />
+            <DataHolder
+              showUpload={props.showUpload}
+              showContextMenu={showContextMenu}
+            />
           </div>
           <div className="label-holder">
-            <h6>Labels Legend</h6>
+            <div className="d-flex flex-row align-items-baseline">
+              <h6>Labels Legend</h6>
+              <OverlayTrigger placement="right" overlay={tooltip}>
+                <div className="px-1">
+                  <Info size={16} fill="black" color="white"></Info>
+                </div>
+              </OverlayTrigger>
+            </div>
             <LabelStack />
           </div>
         </div>

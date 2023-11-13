@@ -6,7 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 function TopNavBar() {
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
+      <Container fluid={true}>
         <Navbar.Brand href="#home">
           <img
             src="/assets/logo-blue.svg"

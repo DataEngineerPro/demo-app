@@ -3,13 +3,14 @@ import './upload.scss';
 import { Dropdown } from 'react-bootstrap';
 import LoadingComponent from '../loading/loading';
 import ContactForm from '../contact/contact';
+import { Upload } from 'react-feather';
 
 // drag drop file component
 function UploadComponent(props: any) {
   // drag state
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showContact, setShowContact] = useState(true);
+  const [showContact, setShowContact] = useState(props.showContact);
   // ref
   const inputRef = useRef(null);
 
@@ -93,7 +94,7 @@ function UploadComponent(props: any) {
 
   return (
     <>
-      <div className="align-items-center d-flex justify-content-center m-auto vh-100 w-50 flex-column">
+      <div className="align-items-center d-flex justify-content-center m-auto upload-container w-50 flex-column">
         {loading && <LoadingComponent></LoadingComponent>}
         {showContact && (
           <ContactForm submit={() => setShowContact(false)}></ContactForm>
@@ -126,7 +127,7 @@ function UploadComponent(props: any) {
                   id="dropdown-basic"
                   className="btn-outline-dark"
                 >
-                  Upload files or folders
+                  <Upload size={18}></Upload>&nbsp; Upload files or folders
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
