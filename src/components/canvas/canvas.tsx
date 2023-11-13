@@ -271,7 +271,19 @@ function Canvas(props: any) {
             </Stage>
           )}
         </div>
+
         <div className="col ms-3 right-panel bg-light">
+          <div className="label-holder">
+            <div className="d-flex flex-row align-items-baseline">
+              <h6>Labels Legend</h6>
+              <OverlayTrigger placement="right" overlay={tooltip}>
+                <div className="px-1">
+                  <Info size={16} fill="black" color="white"></Info>
+                </div>
+              </OverlayTrigger>
+            </div>
+            <LabelStack />
+          </div>
           <div className="d-flex flex-row align-items-baseline">
             <h6>Identified Labels</h6>
             <OverlayTrigger placement="right" overlay={tooltip}>
@@ -285,17 +297,6 @@ function Canvas(props: any) {
               showUpload={props.showUpload}
               showContextMenu={showContextMenu}
             />
-          </div>
-          <div className="label-holder">
-            <div className="d-flex flex-row align-items-baseline">
-              <h6>Labels Legend</h6>
-              <OverlayTrigger placement="right" overlay={tooltip}>
-                <div className="px-1">
-                  <Info size={16} fill="black" color="white"></Info>
-                </div>
-              </OverlayTrigger>
-            </div>
-            <LabelStack />
           </div>
         </div>
 

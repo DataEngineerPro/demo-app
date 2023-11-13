@@ -43,7 +43,7 @@ const addRect = (state: ICanvasStateType, payload: { rect: IRect }) => {
         rect: rect.rect,
         id: state.rects.length + 1,
         isSelected: false,
-        label: 0,
+        label: 1,
         text: '',
       },
     ],
