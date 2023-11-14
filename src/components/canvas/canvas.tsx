@@ -52,7 +52,14 @@ function Canvas(props: any) {
   const [isListening, setListening] = useState<boolean>(false);
   const [selectedRect, setSelectedRect] = useState<IRect | null>(null);
   const [contextRect, setContextRect] = useState<IRect | null>(null);
+  const [listenToStateChange, setListenToStateChange] = useState(false);
 
+  useEffect(() => {
+    if (listenToStateChange) {
+      setListenToStateChange(false);
+      showContextMenu(data.rects[data.rects.length - 1].id);
+    }
+  }, [data]);
   const mousedown = (e: any) => {
     e.evt.preventDefault();
     if (e.evt.button !== 0) return;
@@ -85,15 +92,16 @@ function Canvas(props: any) {
     await fetch(import.meta.env.VITE_API_PREFIX + 'upload_bbox_info', {
       method: 'POST',
     })
-      .then((data) => data.json())
-      .then((data) => {
-        console.log(data);
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
         addRect({
           rect: {
             rect: newRect,
-            text: data.text,
+            text: d.ocr_text,
           },
         });
+        setListenToStateChange(true);
         setTempRect(null);
         setOriginalCords(null);
         setNewCords(null);

@@ -11,11 +11,15 @@ function ActionCard(props: any) {
   if (!props || !props.rect) return;
   const { data, updateValues } = useCanvasContext();
   const { removeRect } = useCanvasContext();
-  const [textValue, setTextValue] = useState<string>(props?.rect?.text);
+  const [textValue, setTextValue] = useState<string>(props?.rect?.comment);
   const [labelValue, setLabelValue] = useState(props.rect?.label);
   const update = () => {
     updateValues({
-      rect: { ...props.rect, text: textValue, label: parseInt(labelValue, 10) },
+      rect: {
+        ...props.rect,
+        comment: textValue.trim(),
+        label: parseInt(labelValue, 10),
+      },
     });
     props.close();
   };
@@ -51,14 +55,6 @@ function ActionCard(props: any) {
       {props.rect.label > -1 && (
         <Card.Body>
           <Card.Text>
-            <Form.Label htmlFor="inputPassword5">Text</Form.Label>
-            <Form.Control
-              type="text"
-              id="inputPassword5"
-              value={props.rect.label === 0 ? 'Processing...' : textValue}
-              onChange={(e) => setTextValue(e.target.value)}
-              disabled={props.rect.label === 0}
-            />
             <Form.Label htmlFor="select">Label</Form.Label>
             <Form.Select
               id="select"
@@ -77,6 +73,15 @@ function ActionCard(props: any) {
                   );
                 })}
             </Form.Select>
+            <Form.Label htmlFor="inputPassword5">Comments</Form.Label>
+            <Form.Control
+              type="text"
+              id="inputPassword5"
+              value={textValue}
+              maxLength={25}
+              onChange={(e) => setTextValue(e.target.value)}
+              disabled={props.rect.label === 0}
+            />
           </Card.Text>
           <Button
             variant="primary"

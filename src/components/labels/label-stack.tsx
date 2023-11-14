@@ -8,12 +8,13 @@ function LabelStack() {
   const { data, addLabel } = useCanvasContext();
   const labelAdd = (e: any) => {
     e.preventDefault();
-    addLabel({ label: { text: labelText } });
+    if (labelText.trim().length > 0)
+      addLabel({ label: { text: labelText.trim() } });
     setLabelText('');
   };
   const handleKeyBoard = (e: KeyboardEvent) => {
-    if (e.keyCode === 13) {
-      addLabel({ label: { text: labelText } });
+    if (e.keyCode === 13 && labelText.trim().length > 0) {
+      addLabel({ label: { text: labelText.trim() } });
       setLabelText('');
     }
   };

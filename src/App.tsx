@@ -26,14 +26,14 @@ function App() {
     },
     {
       id: 1,
-      text: 'Ready To Label',
+      text: 'Select Label',
       color: '#00ff00',
     },
   ]);
   const [document, setDocument] = useState<IImage>({
     url: '/assets/sample.png',
-    width: 2000,
-    height: 1000,
+    width: 2550,
+    height: 3301,
   });
   const [display, setDisplay] = useState(2);
   useEffect(() => {
@@ -114,7 +114,7 @@ function App() {
         {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
-            showContact={showContact}
+            showContact={false}
             uploadComplete={uploadComplete}
           ></UploadComponent>
         )}

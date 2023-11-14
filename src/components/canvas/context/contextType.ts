@@ -17,6 +17,7 @@ export interface IRect {
   label?: ILabel;
   id?: number;
   isSelected?: boolean;
+  comment?: string;
 }
 
 export interface ICanvasStateType {

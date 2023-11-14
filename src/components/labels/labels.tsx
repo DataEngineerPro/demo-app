@@ -1,4 +1,3 @@
-import { Container } from 'react-bootstrap';
 import { useCanvasContext } from '../canvas/context/context';
 import { Circle } from 'react-feather';
 
