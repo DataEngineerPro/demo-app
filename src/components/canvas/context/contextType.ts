@@ -38,7 +38,7 @@ export interface CanvasContextReturnType {
     document: IImage;
   }) => void;
   updateValues: (args: { rect: IRect }) => void;
-  addRect: (args: { rect: IRect }) => void;
+  addRect: (args: { rect: IRect; text: string }) => void;
   selectRect: (args: { rect: IRect; isSelected: boolean }) => void;
   removeRect: (args: { rect: IRect }) => void;
 }

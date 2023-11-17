@@ -13,6 +13,7 @@ function DataHolder(props: any) {
   const openSettings = (item: IRect) => {
     props.showContextMenu(item.id);
   };
+  console.log('Data holder=>', data.rects);
   return (
     <>
       {data.rects && data.rects.filter((x) => x.label !== -1).length > 0 && (
@@ -41,7 +42,7 @@ function DataHolder(props: any) {
                       </td>
                       <td>
                         <div className="text-container">
-                          <div>{x.label !== -1 ? '' : x.text}</div>
+                          <div>{x.text}</div>
                         </div>
                       </td>
                       <td>
@@ -72,7 +73,7 @@ function DataHolder(props: any) {
           />
         </>
       )}
-      {data.rects.filter((x) => x.label !== -1).length === 0 && (
+      {data.rects && data.rects.filter((x) => x.label !== -1).length === 0 && (
         <div className="message small">
           Please start identifying labels by drawing over the document.
         </div>

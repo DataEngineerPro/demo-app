@@ -2,6 +2,7 @@ import Slider from 'react-slick';
 import { useCanvasContext } from '../canvas/context/context';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import './thumbnail-slider.scss';
+import { Button } from 'react-bootstrap';
 
 function ThumbnailSliderComponent() {
   const { data } = useCanvasContext();
@@ -23,7 +24,13 @@ function ThumbnailSliderComponent() {
   return (
     <div>
       <div className="d-flex align-items-center justify-content-center">
-        <ChevronUp size={24}></ChevronUp>
+        <Button variant="outline-dark" size="sm" className="shadow rounded">
+          <ChevronUp size={24}></ChevronUp>
+        </Button>
+        <div className="m-2"></div>
+        <Button variant="outline-dark" size="sm" className="shadow rounded">
+          <ChevronDown size={24}></ChevronDown>
+        </Button>
       </div>
       <div className="slider-container">
         <Slider {...settings}>
@@ -46,9 +53,6 @@ function ThumbnailSliderComponent() {
             />
           </div>
         </Slider>
-      </div>
-      <div className="d-flex align-items-center justify-content-center">
-        <ChevronDown size={24}></ChevronDown>
       </div>
     </div>
   );

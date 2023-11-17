@@ -26,11 +26,11 @@ function Canvas(props: any) {
   useEffect(() => {
     console.log(props);
     setInitialData({
-      rects: props.boundingBoxes,
-      labels: props.labels,
+      rects: props.rects || [],
+      labels: props.labels || [],
       document: props.document,
     });
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     if (!divRef.current || !data.document?.width || !data.document.height)
@@ -83,31 +83,55 @@ function Canvas(props: any) {
       y: tempRect.y / aspectHeight,
       height: tempRect.height / aspectHeight,
     };
-    var params = new URLSearchParams();
-    params.append('id', sessionStorage.getItem(props.id));
-    params.append('x', newRect.x);
-    params.append('x', newRect.y);
-    params.append('width', newRect.width);
-    params.append('height', newRect.height);
-    await fetch(import.meta.env.VITE_API_PREFIX + 'upload_bbox_info', {
+    const body = JSON.stringify({
+      id: props.id,
+      coordinates: [
+        {
+          page_no: '1',
+          left: newRect.x,
+          top: newRect.y,
+          width: newRect.width,
+          height: newRect.height,
+        },
+      ],
+    });
+    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
       method: 'POST',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: body,
     })
       .then((d) => d.json())
       .then((d) => {
         console.log(d);
-        addRect({
-          rect: {
-            rect: newRect,
-            text: d.ocr_text,
-          },
-        });
-        setListenToStateChange(true);
-        setTempRect(null);
-        setOriginalCords(null);
-        setNewCords(null);
+        console.log(d.ocr_text);
+        // addRect({
+        //   rect: {
+        //     rect: newRect,
+        //     text: d.ocr_text,
+        //   },
+        // });
+        // setListenToStateChange(true);
+        // setTempRect(null);
+        // setOriginalCords(null);
+        // setNewCords(null);
+        addNewRect(newRect, d.ocr_text);
       });
+    // addNewRect(newRect, '');
 
     console.log(tempRect, newRect);
+  };
+  const addNewRect = (rect: any, text: string) => {
+    console.log(rect, text);
+    addRect({
+      rect: {
+        rect: rect,
+      },
+      text: text,
+    });
+    setListenToStateChange(true);
+    setTempRect(null);
+    setOriginalCords(null);
+    setNewCords(null);
   };
   const mousemove = (e: any) => {
     e.evt.preventDefault();
@@ -212,108 +236,113 @@ function Canvas(props: any) {
 
   return (
     <>
-      <div className="row">
-        <div className="col-1 left-panel">
-          <ThubmnailSlider></ThubmnailSlider>
-        </div>
-        <div
-          className="ms-3 col-7 border-1 border-dark p-0"
-          ref={divRef}
-          onKeyDown={handleKeyBoard}
-          onKeyUp={handleKeyBoard}
-          tabIndex={0}
-          style={{ borderStyle: 'solid' }}
-        >
-          {divHeight > 0 && divWidth > 0 && (
-            <Stage
-              width={divWidth}
-              height={divHeight}
-              onMouseDown={mousedown}
-              onMouseUp={mouseup}
-              onMouseMove={mousemove}
-              onClick={(e: any) => {
-                handleRectClick(e);
-              }}
-              onContextMenu={handleRightClick}
-            >
-              <Layer>
-                <Image
-                  image={image}
-                  width={divWidth}
-                  height={divHeight}
-                ></Image>
-                {tempRect && (
-                  <Rect
-                    key={tempRect.x}
-                    x={tempRect.x}
-                    y={tempRect.y}
-                    width={tempRect.width}
-                    height={tempRect.height}
-                    stroke="red"
-                    shadowBlur={2}
-                    dash={[2, 2]}
-                  />
-                )}
-                {data.rects &&
-                  data.rects.map((x: any) => {
-                    return (
-                      <Rect
-                        key={x.id}
-                        x={x.rect.x * aspectWidth}
-                        y={x.rect.y * aspectHeight}
-                        width={x.rect.width * aspectWidth}
-                        height={x.rect.height * aspectHeight}
-                        fill={data.labels.find((l) => x.label === l.id).color}
-                        opacity={x.label === -1 ? 1 : 0.1}
-                        fillEnabled={true}
-                        shadowBlur={2}
-                        dash={[2, 2]}
-                        stroke={data.labels.find((l) => x.label === l.id).color}
-                        dashEnabled={x.isSelected}
-                        id={x.id}
-                        onClick={(e: any) => handleRectClick(e, x)}
-                      />
-                    );
-                  })}
-              </Layer>
-            </Stage>
-          )}
-        </div>
+      {data && (
+        <div className="row">
+          <div className="col-1 left-panel">
+            <ThubmnailSlider></ThubmnailSlider>
+          </div>
+          <div
+            className="ms-3 col-7 p-0 shadow rounded"
+            ref={divRef}
+            onKeyDown={handleKeyBoard}
+            onKeyUp={handleKeyBoard}
+            tabIndex={0}
+          >
+            {divHeight > 0 && divWidth > 0 && (
+              <Stage
+                width={divWidth}
+                height={divHeight}
+                onMouseDown={mousedown}
+                onMouseUp={mouseup}
+                onMouseMove={mousemove}
+                onClick={(e: any) => {
+                  handleRectClick(e);
+                }}
+                onContextMenu={handleRightClick}
+              >
+                <Layer>
+                  <Image
+                    image={image}
+                    width={divWidth}
+                    height={divHeight}
+                  ></Image>
+                  {tempRect && (
+                    <Rect
+                      key={tempRect.x}
+                      x={tempRect.x}
+                      y={tempRect.y}
+                      width={tempRect.width}
+                      height={tempRect.height}
+                      stroke="red"
+                      shadowBlur={2}
+                      dash={[2, 2]}
+                    />
+                  )}
+                  {data.rects &&
+                    data.rects.map((x: any) => {
+                      return (
+                        <Rect
+                          key={x.id}
+                          x={x.rect.x * aspectWidth}
+                          y={x.rect.y * aspectHeight}
+                          width={x.rect.width * aspectWidth}
+                          height={x.rect.height * aspectHeight}
+                          fill={
+                            data.labels.find((l) => x.label === l.id)?.color
+                          }
+                          opacity={x.label === -1 ? 1 : 0.1}
+                          fillEnabled={true}
+                          shadowBlur={2}
+                          dash={[2, 2]}
+                          stroke={
+                            data.labels.find((l) => x.label === l.id)?.color
+                          }
+                          dashEnabled={x.isSelected}
+                          id={x.id}
+                          onClick={(e: any) => handleRectClick(e, x)}
+                        />
+                      );
+                    })}
+                </Layer>
+              </Stage>
+            )}
+          </div>
 
-        <div className="col ms-3 right-panel bg-light">
-          <div className="label-holder">
+          <div className="col ms-3 right-panel bg-light">
+            <div className="label-holder">
+              <div className="d-flex flex-row align-items-baseline">
+                <h6>Labels Legend</h6>
+                <OverlayTrigger placement="right" overlay={tooltip}>
+                  <div className="px-1">
+                    <Info size={16} fill="black" color="white"></Info>
+                  </div>
+                </OverlayTrigger>
+              </div>
+              <LabelStack sessionId={props.id} />
+            </div>
             <div className="d-flex flex-row align-items-baseline">
-              <h6>Labels Legend</h6>
+              <h6>Identified Labels</h6>
               <OverlayTrigger placement="right" overlay={tooltip}>
                 <div className="px-1">
                   <Info size={16} fill="black" color="white"></Info>
                 </div>
               </OverlayTrigger>
             </div>
-            <LabelStack />
+            <div className="data-holder">
+              <DataHolder
+                showUpload={props.showUpload}
+                showContextMenu={showContextMenu}
+              />
+            </div>
           </div>
-          <div className="d-flex flex-row align-items-baseline">
-            <h6>Identified Labels</h6>
-            <OverlayTrigger placement="right" overlay={tooltip}>
-              <div className="px-1">
-                <Info size={16} fill="black" color="white"></Info>
-              </div>
-            </OverlayTrigger>
-          </div>
-          <div className="data-holder">
-            <DataHolder
-              showUpload={props.showUpload}
-              showContextMenu={showContextMenu}
-            />
-          </div>
-        </div>
 
-        <div className="menu" ref={menuRef}>
-          {contextRect && (
-            <ActionCard rect={contextRect} close={closeContext}></ActionCard>
-          )}
+          <div className="menu" ref={menuRef}>
+            {contextRect && (
+              <ActionCard rect={contextRect} close={closeContext}></ActionCard>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

@@ -24,8 +24,11 @@ const updateValues = (state: ICanvasStateType, payload: { rect: IRect }) => {
   };
 };
 
-const addRect = (state: ICanvasStateType, payload: { rect: IRect }) => {
-  const { rect } = payload;
+const addRect = (
+  state: ICanvasStateType,
+  payload: { rect: IRect; text: string }
+) => {
+  const { rect, text } = payload;
   if (
     !rect ||
     !rect.rect ||
@@ -44,7 +47,7 @@ const addRect = (state: ICanvasStateType, payload: { rect: IRect }) => {
         id: state.rects.length + 1,
         isSelected: false,
         label: 1,
-        text: '',
+        text: text,
         comment: '',
       },
     ],
@@ -79,15 +82,13 @@ const addLabel = (
   state: ICanvasStateType,
   payload: { label: Partial<ILabel> }
 ) => {
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-  console.log(randomColor);
   return {
     ...state,
     labels: [
       ...state.labels,
       {
         id: state.labels.length + 1,
-        color: '#' + randomColor,
+        color: payload.label.color,
         text: payload.label.text,
       },
     ],

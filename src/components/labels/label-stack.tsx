@@ -3,29 +3,45 @@ import { useCanvasContext } from '../canvas/context/context';
 import { PlusCircle } from 'react-feather';
 import { useState } from 'react';
 
-function LabelStack() {
+function LabelStack(props: any) {
   const [labelText, setLabelText] = useState('');
   const { data, addLabel } = useCanvasContext();
   const labelAdd = (e: any) => {
     e.preventDefault();
-    if (labelText.trim().length > 0)
-      addLabel({ label: { text: labelText.trim() } });
-    setLabelText('');
+    pushLabel();
   };
   const handleKeyBoard = (e: KeyboardEvent) => {
     if (e.keyCode === 13 && labelText.trim().length > 0) {
-      addLabel({ label: { text: labelText.trim() } });
-      setLabelText('');
+      pushLabel();
     }
+  };
+  const pushLabel = () => {
+    if (!labelText || labelText.trim().length === 0) return;
+    if (data.labels.filter((x) => x.text === labelText).length > 0) {
+      setLabelText('');
+      return;
+    }
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
+    fetch(import.meta.env.VITE_API_PREFIX + '/api/labels', {
+      method: 'POST',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: JSON.stringify({
+        id: props.sessionId,
+        labels: [{ label: labelText.trim(), colour: '#' + randomColor }],
+      }),
+    });
+    addLabel({ label: { text: labelText.trim(), color: '#' + randomColor } });
+    setLabelText('');
   };
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       {data.labels
-        .filter((x) => x.id > 1)
+        .filter((x) => x.id !== -1 && x.id !== 0 && x.id !== 1)
         .map((x) => {
           return (
             <Button
-              key={x.id}
+              key={x.text}
               variant="outline-dark"
               style={{ backgroundColor: x.color + '4D' }}
             >
@@ -35,7 +51,8 @@ function LabelStack() {
                 pill
                 style={{ backgroundColor: '#000', color: '#fff' }}
               >
-                {data.rects.filter((r) => r.label === x.id).length}
+                {data.rects &&
+                  data.rects.filter((r) => r.label === x.id).length}
               </Badge>
             </Button>
           );

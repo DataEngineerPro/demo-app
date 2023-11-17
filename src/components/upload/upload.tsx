@@ -45,10 +45,13 @@ function UploadComponent(props: any) {
       setLoading(true);
       const formData = new FormData();
       formData.append('file', e.dataTransfer.files[0]);
-      const response = await fetch(import.meta.env.VITE_API_PREFIX + 'upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        import.meta.env.VITE_API_PREFIX + '/api/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
       if (response.ok) {
         const resp = await response.json();
         props.uploadComplete(resp.id);
@@ -67,10 +70,13 @@ function UploadComponent(props: any) {
       setLoading(true);
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
-      const response = await fetch(import.meta.env.VITE_API_PREFIX + 'upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        import.meta.env.VITE_API_PREFIX + '/api/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
       if (response.ok) {
         const resp = await response.json();
         props.uploadComplete(resp.id);
@@ -94,7 +100,7 @@ function UploadComponent(props: any) {
 
   return (
     <>
-      <div className="row">
+      <div className="row upload-container my-0">
         <div className="col-6 d-flex justify-content-center align-items-center">
           <img src="/assets/illustration-bg.svg" />
         </div>

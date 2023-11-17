@@ -50,11 +50,12 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     });
   }, []);
 
-  const addRect = useCallback((args: { rect: IRect }) => {
+  const addRect = useCallback((args: { rect: IRect; text: string }) => {
     dispatch({
       type: ActionTypes.ADD_RECT,
       payload: {
         rect: args.rect,
+        text: args.text,
       },
     });
   }, []);

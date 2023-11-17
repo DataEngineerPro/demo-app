@@ -4,14 +4,17 @@ import Form from 'react-bootstrap/Form';
 import { useCanvasContext } from '../canvas/context/context';
 import { useEffect, useState } from 'react';
 import './card.scss';
-import { Circle } from 'react-feather';
 import { CardBody, CardText } from 'react-bootstrap';
+import { X } from 'react-feather';
 
 function ActionCard(props: any) {
   if (!props || !props.rect) return;
+  console.log(props);
   const { data, updateValues } = useCanvasContext();
   const { removeRect } = useCanvasContext();
-  const [textValue, setTextValue] = useState<string>(props?.rect?.comment);
+  const [textValue, setTextValue] = useState<string>(
+    props?.rect?.comment || ''
+  );
   const [labelValue, setLabelValue] = useState(props.rect?.label);
   const update = () => {
     updateValues({
@@ -64,10 +67,10 @@ function ActionCard(props: any) {
               disabled={props.rect.label === 0}
             >
               {data.labels
-                .filter((x) => x.id === -1 || x.id > 0)
+                .filter((x) => x.id !== -1 && x.id !== 0)
                 .map((x) => {
                   return (
-                    <option key={x.id} value={x.id} disabled={x.id === 1}>
+                    <option key={x.text} value={x.id} disabled={x.id === 1}>
                       {x.text}
                     </option>
                   );
