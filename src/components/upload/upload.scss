@@ -55,3 +55,10 @@
   background: linear-gradient(0deg, #cae5ff, #cae5ff),
     linear-gradient(0deg, #ffffff, #ffffff);
 }
+
+.left-col {
+  background-image: url('/assets/illustration-bg.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}

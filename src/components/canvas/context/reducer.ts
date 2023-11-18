@@ -11,6 +11,7 @@ const setInitialData = (
     rects: payload.rects,
     labels: payload.labels,
     document: payload.document,
+    nextRectId: payload.rects.length + 1,
   };
 };
 
@@ -44,13 +45,14 @@ const addRect = (
       ...state.rects,
       {
         rect: rect.rect,
-        id: state.rects.length + 1,
+        id: state.nextRectId,
         isSelected: false,
         label: 1,
-        text: text,
+        text: '',
         comment: '',
       },
     ],
+    nextRectId: state.nextRectId + 1,
   };
 };
 

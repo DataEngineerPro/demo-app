@@ -14,7 +14,7 @@ export interface IImage {
 export interface IRect {
   rect: { x: number; y: number; width: number; height: number };
   text?: string;
-  label?: ILabel;
+  label?: number;
   id?: number;
   isSelected?: boolean;
   comment?: string;
@@ -24,6 +24,7 @@ export interface ICanvasStateType {
   rects: Array<IRect>;
   labels: Array<ILabel>;
   document?: IImage;
+  nextRectId: number;
 }
 
 export interface CanvasContextProviderProps {

@@ -12,7 +12,7 @@ import { useCanvasContext } from './components/canvas/context/context';
 
 function App() {
   const lumenSessionId = 'LumenSessionId';
-  const [showContact, setShowContact] = useState(true);
+  const [showContact, setShowContact] = useState(false);
   const [boundingBoxes, setBoundingBoxes] = useState([]);
   const [labels, setLabels] = useState<Array<ILabel>>([
     {
@@ -73,7 +73,8 @@ function App() {
         if (data.ok) return data.json();
         throw 'newError';
       })
-      .then((data) => {
+      .then((arrData) => {
+        const data = arrData[0];
         if (!data.id) {
           sessionStorage.removeItem(sessionId);
           setDisplay(1);
@@ -100,6 +101,16 @@ function App() {
         '&page_no=' +
         1
     ).then((data) => data.json());
+    const labelDataSet = [
+      ...labels,
+      ...apilabels.map((x, index) => {
+        return {
+          id: 2 + index,
+          text: x.label,
+          color: x.colour,
+        };
+      }),
+    ];
     if (boundingBoxes.length > 0) {
       const newBoundingBoxes = boundingBoxes.map((x: any, index: number) => {
         return {
@@ -109,25 +120,19 @@ function App() {
             width: x.width,
             height: x.height,
           },
-          id: index,
-          label: x.label ? x.label : 1,
+          id: index + 1,
+          label: x.label_name
+            ? labelDataSet.find((l) => l.text === x.label_name).id
+            : 1,
           text: x.ocr_text,
+          comment: x.comments,
         };
       });
       console.log(newBoundingBoxes);
       setBoundingBoxes(newBoundingBoxes);
     }
     if (apilabels.length > 0) {
-      setLabels([
-        ...labels,
-        ...apilabels.map((x) => {
-          return {
-            id: x.id,
-            text: x.label,
-            color: x.colour,
-          };
-        }),
-      ]);
+      setLabels(labelDataSet);
     }
     setDocument(documentData);
     setDisplay(2);
@@ -149,7 +154,7 @@ function App() {
         {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
-            showContact={false}
+            showContact={showContact}
             uploadComplete={uploadComplete}
           ></UploadComponent>
         )}

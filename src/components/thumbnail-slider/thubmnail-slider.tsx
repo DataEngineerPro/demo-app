@@ -24,11 +24,21 @@ function ThumbnailSliderComponent() {
   return (
     <div>
       <div className="d-flex align-items-center justify-content-center">
-        <Button variant="outline-dark" size="sm" className="shadow rounded">
+        <Button
+          disabled={true}
+          variant="outline-dark"
+          size="sm"
+          className="shadow rounded"
+        >
           <ChevronUp size={24}></ChevronUp>
         </Button>
         <div className="m-2"></div>
-        <Button variant="outline-dark" size="sm" className="shadow rounded">
+        <Button
+          disabled={true}
+          variant="outline-dark"
+          size="sm"
+          className="shadow rounded"
+        >
           <ChevronDown size={24}></ChevronDown>
         </Button>
       </div>
@@ -40,7 +50,7 @@ function ThumbnailSliderComponent() {
               className="img-thumbnail rounded mx-auto"
             />
           </div>
-          <div className="d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2">
+          {/* <div className="d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2">
             <img
               src={data.document?.url}
               className="img-thumbnail rounded mx-auto"
@@ -50,8 +60,8 @@ function ThumbnailSliderComponent() {
             <img
               src={data.document?.url}
               className="img-thumbnail rounded mx-auto"
-            />
-          </div>
+            /> 
+          </div>  */}
         </Slider>
       </div>
     </div>

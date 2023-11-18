@@ -28,42 +28,46 @@ function DataHolder(props: any) {
             </thead>
             <tbody>
               {data.rects &&
-                data.rects.map((x: any) => {
-                  return (
-                    <tr key={x.id}>
-                      <td
-                        style={{
-                          backgroundColor:
-                            data?.labels?.find((l) => x.label === l.id)?.color +
-                            '19',
-                        }}
-                      >
-                        {data?.labels?.find((l) => x.label === l.id)?.text}
-                      </td>
-                      <td>
-                        <div className="text-container">
-                          <div>{x.text}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="text-container">
-                          <div>{x.comment}</div>
-                          <small
-                            className="pointer"
-                            onClick={() => openSettings(x)}
-                          >
-                            <Settings className="icon" />
-                          </small>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                data.rects
+                  .filter((x) => x.label !== -1)
+                  .sort((x, y) => x.id - y.id)
+                  .map((x: any) => {
+                    return (
+                      <tr key={x.id}>
+                        <td
+                          style={{
+                            backgroundColor:
+                              data?.labels?.find((l) => x.label === l.id)
+                                ?.color + '19',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {data?.labels?.find((l) => x.label === l.id)?.text}
+                        </td>
+                        <td>
+                          <div className="text-container">
+                            <div>{x.text}</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="text-container">
+                            <div>{x.comment}</div>
+                            <small
+                              className="pointer"
+                              onClick={() => openSettings(x)}
+                            >
+                              <Settings className="icon" />
+                            </small>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
             </tbody>
           </Table>
 
           <Button variant="success" onClick={() => setShowModal(true)}>
-            Evaluate and Submit for Model Training
+            Submit for Model Training
           </Button>
 
           <SuccessModal

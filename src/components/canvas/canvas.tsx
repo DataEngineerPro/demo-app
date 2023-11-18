@@ -83,40 +83,7 @@ function Canvas(props: any) {
       y: tempRect.y / aspectHeight,
       height: tempRect.height / aspectHeight,
     };
-    const body = JSON.stringify({
-      id: props.id,
-      coordinates: [
-        {
-          page_no: '1',
-          left: newRect.x,
-          top: newRect.y,
-          width: newRect.width,
-          height: newRect.height,
-        },
-      ],
-    });
-    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
-      method: 'POST',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      body: body,
-    })
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-        console.log(d.ocr_text);
-        // addRect({
-        //   rect: {
-        //     rect: newRect,
-        //     text: d.ocr_text,
-        //   },
-        // });
-        // setListenToStateChange(true);
-        // setTempRect(null);
-        // setOriginalCords(null);
-        // setNewCords(null);
-        addNewRect(newRect, d.ocr_text);
-      });
-    // addNewRect(newRect, '');
+    addNewRect(newRect, '');
 
     console.log(tempRect, newRect);
   };
@@ -126,7 +93,7 @@ function Canvas(props: any) {
       rect: {
         rect: rect,
       },
-      text: text,
+      text: 'text',
     });
     setListenToStateChange(true);
     setTempRect(null);
@@ -165,6 +132,10 @@ function Canvas(props: any) {
     } else if (!newRect && selectedRect) {
       selectRect({ rect: selectedRect, isSelected: false });
       setSelectedRect(null);
+    } else if (newRect && selectedRect && newRect.id === selectedRect.id) {
+      selectRect({ rect: selectedRect, isSelected: true });
+      setSelectedRect(null);
+      showContextMenu(selectedRect.id);
     }
   };
 
@@ -183,6 +154,7 @@ function Canvas(props: any) {
     setContextRect(null);
     setTimeout(() => {
       setContextRect(selectedbox);
+      console.log(selectedbox);
       // show menu
       if (menuRef.current && divRef.current) {
         menuRef.current.style.display = 'initial';
@@ -220,6 +192,24 @@ function Canvas(props: any) {
       setListening(false);
       setTempRect(null);
     } else if (e.keyCode === 8 && selectedRect) {
+      const body = {
+        id: props.id,
+        coordinates: [
+          {
+            page_no: '1',
+            left: selectedRect.rect.x,
+            top: selectedRect.rect.y,
+            width: selectedRect.rect.width,
+            height: selectedRect.rect.height,
+          },
+        ],
+      };
+      fetch(import.meta.env.VITE_API_PREFIX + '/api/delete_bbox', {
+        method: 'DELETE',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        body: JSON.stringify(body),
+      });
+
       removeRect({ rect: selectedRect });
       setSelectedRect(null);
       setContextRect(null);
@@ -242,7 +232,7 @@ function Canvas(props: any) {
             <ThubmnailSlider></ThubmnailSlider>
           </div>
           <div
-            className="ms-3 col-7 p-0 shadow rounded"
+            className="ms-3 col-6 p-0 shadow rounded"
             ref={divRef}
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
@@ -280,6 +270,12 @@ function Canvas(props: any) {
                   )}
                   {data.rects &&
                     data.rects.map((x: any) => {
+                      console.log(
+                        x.rect.x * aspectWidth,
+                        x.rect.y * aspectHeight,
+                        x.rect.width * aspectWidth,
+                        x.rect.height * aspectHeight
+                      );
                       return (
                         <Rect
                           key={x.id}
@@ -332,13 +328,18 @@ function Canvas(props: any) {
               <DataHolder
                 showUpload={props.showUpload}
                 showContextMenu={showContextMenu}
+                sessionId={props.id}
               />
             </div>
           </div>
 
           <div className="menu" ref={menuRef}>
             {contextRect && (
-              <ActionCard rect={contextRect} close={closeContext}></ActionCard>
+              <ActionCard
+                rect={contextRect}
+                close={closeContext}
+                sessionId={props.id}
+              ></ActionCard>
             )}
           </div>
         </div>

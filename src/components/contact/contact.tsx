@@ -263,18 +263,14 @@ function ContactForm(props) {
   };
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Name</Form.Label>
+      <Form.Group className="mb-3" controlId="formFullName">
+        <Form.Label>Full Name</Form.Label>
         <Form.Control type="text" placeholder="Full Name" required />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Work Email</Form.Label>
-        <Form.Control
-          type="email"
-          placeholder="Enter business email"
-          required
-        />
+        <Form.Control type="email" placeholder="Work Email" required />
         <Form.Text className="text-muted">
           We'll never share your email with anyone else.
         </Form.Text>
@@ -283,7 +279,7 @@ function ContactForm(props) {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicEmail">
+      <Form.Group className="mb-3" controlId="formWorkEmail">
         <Form.Label>Company</Form.Label>
         <Form.Control type="text" placeholder="Company Name" required />
         <Form.Control.Feedback type="invalid">
@@ -291,19 +287,27 @@ function ContactForm(props) {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Company</Form.Label>
-        <Form.Control type="text" placeholder="Company Name" required />
+      <Form.Group className="mb-3" controlId="formCountry">
+        <Form.Label>Country</Form.Label>
+        <Form.Select aria-label="Default select example" value={'India'}>
+          {countries.map((c) => {
+            return (
+              <option key={c.name} value={c.name}>
+                {c.name}
+              </option>
+            );
+          })}
+        </Form.Select>
         <Form.Control.Feedback type="invalid">
           Please provide a valid compnay name.
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicPassword">
+      <Form.Group className="mb-3" controlId="formPhoneNumber">
         <Form.Label>Phone</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Phone"
+          placeholder="Phone Number"
           pattern="\d{10}"
           required
         />
@@ -311,16 +315,21 @@ function ContactForm(props) {
           Please provide a valid phone number.
         </Form.Control.Feedback>
       </Form.Group>
-      <Form.Group className="mb-3" controlId="formBasicCheckbox">
-        <Form.Check
-          type="checkbox"
-          label="I accept the Terms & Conditions of Lumen AI"
-          feedback="You must agree before submitting."
-          feedbackType="invalid"
-        ></Form.Check>
+
+      <Form.Group className="mb-3" controlId="formComments">
+        <Form.Control
+          as="textarea"
+          placeholder="Please explain your use case"
+          rows={3}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          Provide breif description of your use case(s).
+        </Form.Control.Feedback>
       </Form.Group>
+
       <Button variant="primary" type="submit">
-        Take me to demo!
+        Submit
       </Button>
     </Form>
   );

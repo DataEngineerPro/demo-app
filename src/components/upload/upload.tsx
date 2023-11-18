@@ -101,8 +101,8 @@ function UploadComponent(props: any) {
   return (
     <>
       <div className="row upload-container my-0">
-        <div className="col-6 d-flex justify-content-center align-items-center">
-          <img src="/assets/illustration-bg.svg" />
+        <div className="col-6 d-flex justify-content-center align-items-center left-col">
+          &nbsp;
         </div>
 
         <div className="col-6 align-items-center d-flex justify-content-center m-auto upload-container flex-column">
@@ -156,6 +156,10 @@ function UploadComponent(props: any) {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
+                <div className="m-3">
+                  Free trial version will support only 1st page of the uploaded
+                  file for model training
+                </div>
               </div>
             </label>
             {dragActive && (

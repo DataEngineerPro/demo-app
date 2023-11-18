@@ -15,18 +15,75 @@ function ActionCard(props: any) {
   const [textValue, setTextValue] = useState<string>(
     props?.rect?.comment || ''
   );
+  const [predictedValue] = useState(props?.rect?.text || '');
   const [labelValue, setLabelValue] = useState(props.rect?.label);
-  const update = () => {
+  console.log('CARD==>', data.labels);
+  const callApi = async (newRect, label, comment) => {
+    const body = JSON.stringify({
+      id: props.sessionId,
+      coordinates: [
+        {
+          page_no: '1',
+          left: newRect.x,
+          top: newRect.y,
+          width: newRect.width,
+          height: newRect.height,
+          label_name: data.labels.filter((x) => x.id == label)[0].text,
+          comments: comment,
+        },
+      ],
+    });
+    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
+      method: 'POST',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: body,
+    })
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        console.log(d.ocr_text);
+        updateValues({
+          rect: {
+            ...props.rect,
+            comment: textValue.trim(),
+            label: parseInt(labelValue, 10),
+            text: d.ocr_text,
+          },
+        });
+      });
+  };
+  const update = async () => {
     updateValues({
       rect: {
         ...props.rect,
         comment: textValue.trim(),
         label: parseInt(labelValue, 10),
+        text: predictedValue || 'Updating...',
       },
     });
     props.close();
+    callApi(props.rect.rect, labelValue, textValue.trim());
   };
   const deleteRect = () => {
+    const body = {
+      id: props.sessionId,
+      coordinates: [
+        {
+          page_no: '1',
+          left: props.rect.rect.x,
+          top: props.rect.rect.y,
+          width: props.rect.rect.width,
+          height: props.rect.rect.height,
+          label_name: '',
+          comments: '',
+        },
+      ],
+    };
+    fetch(import.meta.env.VITE_API_PREFIX + '/api/delete_bbox', {
+      method: 'DELETE',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: JSON.stringify(body),
+    });
     removeRect({ rect: props.rect });
     props.close();
   };
@@ -64,13 +121,13 @@ function ActionCard(props: any) {
               aria-label="Please select label"
               defaultValue={labelValue}
               onChange={labelChange}
-              disabled={props.rect.label === 0}
+              required
             >
               {data.labels
-                .filter((x) => x.id !== -1 && x.id !== 0)
+                .filter((x) => x.id !== 0)
                 .map((x) => {
                   return (
-                    <option key={x.text} value={x.id} disabled={x.id === 1}>
+                    <option key={x.text} value={x.id} disabled={x.id == 1}>
                       {x.text}
                     </option>
                   );
@@ -83,13 +140,13 @@ function ActionCard(props: any) {
               value={textValue}
               maxLength={25}
               onChange={(e) => setTextValue(e.target.value)}
-              disabled={props.rect.label === 0}
+              disabled={labelValue == 0}
             />
           </Card.Text>
           <Button
-            variant="primary"
+            variant={labelValue == 1 ? 'secondary' : 'primary'}
             onClick={update}
-            disabled={props.rect.label === 0}
+            disabled={labelValue == 1}
           >
             Update
           </Button>

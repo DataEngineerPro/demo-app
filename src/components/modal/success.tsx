@@ -10,7 +10,7 @@ function SuccessModal(props: any) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Evaluate and Submit for Model Training
+          Submit for Model Training
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
