@@ -305,24 +305,45 @@ function Canvas(props: any) {
           </div>
 
           <div className="col ms-3 right-panel bg-light">
+            <div className="d-flex flex-column mb-2">
+              <h6>Instructions</h6>
+              <ol className="list-group list-group-numbered list-group-flush">
+                <li className="list-group-item">
+                  Create a new label for each data field to extract.
+                </li>
+                <li className="list-group-item">
+                  Click on the worksheet where these fields are located.
+                </li>
+                <li className="list-group-item">
+                  Assign labels to each field and add optional comments.
+                </li>
+                <li className="list-group-item">
+                  Submit the worksheet after labeling all fields for model
+                  preparation.
+                </li>
+                <li className="list-group-item">
+                  You'll be notified when the model is ready.
+                </li>
+              </ol>
+            </div>
             <div className="label-holder">
               <div className="d-flex flex-row align-items-baseline">
                 <h6>Labels Legend</h6>
-                <OverlayTrigger placement="right" overlay={tooltip}>
+                {/* <OverlayTrigger placement="right" overlay={tooltip}>
                   <div className="px-1">
                     <Info size={16} fill="black" color="white"></Info>
                   </div>
-                </OverlayTrigger>
+                </OverlayTrigger> */}
               </div>
               <LabelStack sessionId={props.id} />
             </div>
             <div className="d-flex flex-row align-items-baseline">
               <h6>Identified Labels</h6>
-              <OverlayTrigger placement="right" overlay={tooltip}>
+              {/* <OverlayTrigger placement="right" overlay={tooltip}>
                 <div className="px-1">
                   <Info size={16} fill="black" color="white"></Info>
                 </div>
-              </OverlayTrigger>
+              </OverlayTrigger> */}
             </div>
             <div className="data-holder">
               <DataHolder

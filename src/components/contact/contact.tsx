@@ -248,29 +248,54 @@ function ContactForm(props) {
     { name: 'Zimbabwe', code: 'ZW' },
   ];
   const [validated, setValidated] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+      return;
     }
-
+    setLoading(true);
     setValidated(true);
     if (form.checkValidity()) {
-      props.submit();
+      var formData = new FormData(event.target);
+      var json = Object.fromEntries(formData.entries());
+      fetch('/api/form', {
+        method: 'POST',
+        body: JSON.stringify(json),
+        headers: new Headers({ 'content-type': 'application/json' }),
+      }).then(() => {
+        setLoading(false);
+        props.submit();
+      });
     }
   };
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+    <Form
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+      onChange={(e) => setValidated(e.target.checkValidity())}
+    >
       <Form.Group className="mb-3" controlId="formFullName">
         <Form.Label>Full Name</Form.Label>
-        <Form.Control type="text" placeholder="Full Name" required />
+        <Form.Control
+          name="fullname"
+          type="text"
+          placeholder="Full Name"
+          required
+        />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Work Email</Form.Label>
-        <Form.Control type="email" placeholder="Work Email" required />
+        <Form.Control
+          name="workemail"
+          type="email"
+          placeholder="Work Email"
+          required
+        />
         <Form.Text className="text-muted">
           We'll never share your email with anyone else.
         </Form.Text>
@@ -279,9 +304,14 @@ function ContactForm(props) {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formWorkEmail">
+      <Form.Group className="mb-3" controlId="formCompany">
         <Form.Label>Company</Form.Label>
-        <Form.Control type="text" placeholder="Company Name" required />
+        <Form.Control
+          name="company"
+          type="text"
+          placeholder="Company Name"
+          required
+        />
         <Form.Control.Feedback type="invalid">
           Please provide a valid compnay name.
         </Form.Control.Feedback>
@@ -289,7 +319,11 @@ function ContactForm(props) {
 
       <Form.Group className="mb-3" controlId="formCountry">
         <Form.Label>Country</Form.Label>
-        <Form.Select aria-label="Default select example" value={'India'}>
+        <Form.Select
+          name="country"
+          aria-label="Default select example"
+          defaultValue={'India'}
+        >
           {countries.map((c) => {
             return (
               <option key={c.name} value={c.name}>
@@ -306,7 +340,8 @@ function ContactForm(props) {
       <Form.Group className="mb-3" controlId="formPhoneNumber">
         <Form.Label>Phone</Form.Label>
         <Form.Control
-          type="text"
+          name="phone"
+          type="number"
           placeholder="Phone Number"
           pattern="\d{10}"
           required
@@ -318,6 +353,7 @@ function ContactForm(props) {
 
       <Form.Group className="mb-3" controlId="formComments">
         <Form.Control
+          name="usecase"
           as="textarea"
           placeholder="Please explain your use case"
           rows={3}
@@ -328,8 +364,8 @@ function ContactForm(props) {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Button variant="primary" type="submit">
-        Submit
+      <Button variant="primary" disabled={loading} type="submit">
+        {loading ? 'Submitting...' : 'Submit'}
       </Button>
     </Form>
   );

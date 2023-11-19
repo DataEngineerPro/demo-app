@@ -12,7 +12,7 @@ import { useCanvasContext } from './components/canvas/context/context';
 
 function App() {
   const lumenSessionId = 'LumenSessionId';
-  const [showContact, setShowContact] = useState(false);
+  const [showContact, setShowContact] = useState(true);
   const [boundingBoxes, setBoundingBoxes] = useState([]);
   const [labels, setLabels] = useState<Array<ILabel>>([
     {

@@ -9,7 +9,7 @@ function TopNavBar() {
       <Container fluid={true}>
         <Navbar.Brand href="#home">
           <img
-            src="/assets/logo.svg"
+            src="assets/logo-blue.png"
             width="250"
             height="60"
             className="d-inline-block align-top"
