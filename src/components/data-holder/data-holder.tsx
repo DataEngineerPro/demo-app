@@ -6,10 +6,23 @@ import './data-holder.scss';
 import { IRect } from '../canvas/context/contextType';
 import SuccessModal from '../modal/success';
 import { useState } from 'react';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 function DataHolder(props: any) {
   const { data } = useCanvasContext();
   const [showModal, setShowModal] = useState(false);
+  const columns: GridColDef[] = [
+    {
+      field: 'label',
+      headerName: 'Label',
+      valueGetter: (params: GridValueGetterParams) => {
+        console.log(params.row);
+        return data?.labels?.find((l) => l.id === params.row.label)?.text;
+      },
+    },
+    { field: 'text', headerName: 'Predicted Value', flex: 1 },
+    { field: 'comment', headerName: 'Comments', flex: 1 },
+  ];
   const openSettings = (item: IRect) => {
     props.showContextMenu(item.id);
   };
@@ -19,7 +32,8 @@ function DataHolder(props: any) {
       {
         // data.rects && data.rects.filter((x) => x.label !== -1).length > 0 && (
         <>
-          <Table striped bordered hover>
+          <DataGrid rows={data.rects} columns={columns} hideFooter={true} />
+          {/* <Table striped bordered hover>
             <thead>
               <tr>
                 <th>Label</th>
@@ -65,7 +79,7 @@ function DataHolder(props: any) {
                     );
                   })}
             </tbody>
-          </Table>
+          </Table> */}
 
           {data.rects &&
             data.rects.filter((x) => x.label !== -1).length > 0 && (
