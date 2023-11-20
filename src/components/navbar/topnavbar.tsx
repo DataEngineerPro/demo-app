@@ -3,11 +3,15 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-function TopNavBar() {
+function TopNavBar(props) {
+  const clearSession = (e) => {
+    e.preventDefault();
+    props.reset();
+  };
   return (
     <Navbar expand="lg" className="bg-body-tertiary shadow rounded">
       <Container fluid={true}>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/" onClick={clearSession}>
           <img
             src="assets/logo-blue.png"
             width="250"
@@ -19,7 +23,7 @@ function TopNavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#home"></Nav.Link>
+            <Nav.Link href="/" onClick={clearSession}></Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

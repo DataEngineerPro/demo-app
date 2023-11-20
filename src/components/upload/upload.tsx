@@ -11,6 +11,7 @@ function UploadComponent(props: any) {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showContact, setShowContact] = useState(props.showContact);
+  const [session_id, setSession_id] = useState<string>(null);
   // ref
   const inputRef = useRef(null);
 
@@ -71,7 +72,7 @@ function UploadComponent(props: any) {
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
       const response = await fetch(
-        import.meta.env.VITE_API_PREFIX + '/api/upload',
+        import.meta.env.VITE_API_PREFIX + '/api/upload?id=' + session_id,
         {
           method: 'POST',
           body: formData,
@@ -94,10 +95,15 @@ function UploadComponent(props: any) {
 
   const formSubmit = (e) => {
     e.preventDefault();
-    console.log(import.meta.env.API_PREFIX);
+    // console.log(import.meta.env.API_PREFIX);
     //fetch(import.meta.env.API_PREFIX)
   };
 
+  const formsubmit = (id: string) => {
+    setShowContact(false);
+    setSession_id(id);
+    props.contactComplete();
+  };
   return (
     <>
       <div className="row upload-container my-0">
@@ -107,9 +113,7 @@ function UploadComponent(props: any) {
 
         <div className="col-6 align-items-center d-flex justify-content-center m-auto upload-container flex-column">
           {loading && <LoadingComponent></LoadingComponent>}
-          {showContact && (
-            <ContactForm submit={() => setShowContact(false)}></ContactForm>
-          )}
+          {showContact && <ContactForm submit={formsubmit}></ContactForm>}
           <form
             className={`my-5 ${
               loading || showContact ? 'visually-hidden' : ''

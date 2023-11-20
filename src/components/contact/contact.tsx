@@ -265,10 +265,12 @@ function ContactForm(props) {
         method: 'POST',
         body: JSON.stringify(json),
         headers: new Headers({ 'content-type': 'application/json' }),
-      }).then(() => {
-        setLoading(false);
-        props.submit();
-      });
+      })
+        .then((data) => data.json())
+        .then((data) => {
+          setLoading(false);
+          props.submit(data.session_id);
+        });
     }
   };
   return (
@@ -341,9 +343,10 @@ function ContactForm(props) {
         <Form.Label>Phone</Form.Label>
         <Form.Control
           name="phone"
-          type="number"
+          type="tel"
           placeholder="Phone Number"
-          pattern="\d{10}"
+          minLength={10}
+          maxLength={14}
           required
         />
         <Form.Control.Feedback type="invalid">

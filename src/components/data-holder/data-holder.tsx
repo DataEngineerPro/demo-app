@@ -16,7 +16,8 @@ function DataHolder(props: any) {
   console.log('Data holder=>', data.rects);
   return (
     <>
-      {data.rects && data.rects.filter((x) => x.label !== -1).length > 0 && (
+      {
+        // data.rects && data.rects.filter((x) => x.label !== -1).length > 0 && (
         <>
           <Table striped bordered hover>
             <thead>
@@ -66,9 +67,12 @@ function DataHolder(props: any) {
             </tbody>
           </Table>
 
-          <Button variant="success" onClick={() => setShowModal(true)}>
-            Submit for Model Training
-          </Button>
+          {data.rects &&
+            data.rects.filter((x) => x.label !== -1).length > 0 && (
+              <Button variant="success" onClick={() => setShowModal(true)}>
+                Submit for Model Training
+              </Button>
+            )}
 
           <SuccessModal
             onSuccess={props.showUpload}
@@ -76,12 +80,12 @@ function DataHolder(props: any) {
             onHide={() => setShowModal(false)}
           />
         </>
-      )}
-      {data.rects && data.rects.filter((x) => x.label !== -1).length === 0 && (
+      }
+      {/* {data.rects && data.rects.filter((x) => x.label !== -1).length === 0 && (
         <div className="message small">
           Please start identifying labels by drawing over the document.
         </div>
-      )}
+      )} */}
     </>
   );
 }

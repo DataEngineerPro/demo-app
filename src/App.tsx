@@ -147,15 +147,21 @@ function App() {
     setDisplay(1);
   };
 
+  const reset = () => {
+    sessionStorage.removeItem(lumenSessionId);
+    setDisplay(1);
+  };
+
   return (
     <>
-      <TopNavBar></TopNavBar>
+      <TopNavBar reset={reset}></TopNavBar>
       <Container fluid={true}>
         {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
             showContact={showContact}
             uploadComplete={uploadComplete}
+            contactComplete={() => setShowContact(false)}
           ></UploadComponent>
         )}
         {display === 2 && (
