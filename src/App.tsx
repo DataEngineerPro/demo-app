@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { IImage, ILabel } from './components/canvas/context/contextType';
 import UploadComponent from './components/upload/upload';
 import LoadingComponent from './components/loading/loading';
-import { useCanvasContext } from './components/canvas/context/context';
 
 function App() {
   const lumenSessionId = 'LumenSessionId';
