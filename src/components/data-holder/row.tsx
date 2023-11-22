@@ -5,10 +5,12 @@ import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 function TableRow(props: any) {
-  const [edit, setEdit] = useState(false);
-  const [ocrValue, setOcrValue] = useState(props.item.text);
-  const { data, updateValues } = useCanvasContext();
   const x: IRect = props.item;
+
+  const [edit, setEdit] = useState(false);
+  const [ocrValue, setOcrValue] = useState(x.text);
+  const { data, updateValues } = useCanvasContext();
+
   const openSettings = (item: IRect) => {
     props.showContextMenu(item.id);
   };
@@ -69,6 +71,10 @@ function TableRow(props: any) {
         // props.resetSession();
       });
   };
+  const enableEdit = (str: string) => {
+    setOcrValue(str);
+    setEdit(true);
+  };
   return (
     <tr key={x.id}>
       <td
@@ -86,7 +92,7 @@ function TableRow(props: any) {
             {!edit && (
               <div className="d-flex flex-row justify-content-between w-100">
                 {x.text}
-                <Edit size={16} onClick={() => setEdit(true)}></Edit>
+                <Edit size={16} onClick={() => enableEdit(x.text)}></Edit>
               </div>
             )}
             {edit && (
