@@ -92,7 +92,11 @@ function TableRow(props: any) {
             {!edit && (
               <div className="d-flex flex-row justify-content-between w-100">
                 {x.text}
-                <Edit size={16} onClick={() => enableEdit(x.text)}></Edit>
+                <Edit
+                  className="icon"
+                  size={16}
+                  onClick={() => enableEdit(x.text)}
+                ></Edit>
               </div>
             )}
             {edit && (
@@ -106,7 +110,7 @@ function TableRow(props: any) {
                   onKeyDown={handleKeyboard}
                   required
                 />
-                <Save size={18} onClick={handleSave}></Save>
+                <Save className="icon" size={18} onClick={handleSave}></Save>
               </div>
             )}
           </div>
