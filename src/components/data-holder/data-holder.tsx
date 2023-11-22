@@ -6,14 +6,11 @@ import './data-holder.scss';
 import { IRect } from '../canvas/context/contextType';
 import SuccessModal from '../modal/success';
 import { useState } from 'react';
+import TableRow from './row';
 
 function DataHolder(props: any) {
   const { data } = useCanvasContext();
   const [showModal, setShowModal] = useState(false);
-  const openSettings = (item: IRect) => {
-    props.showContextMenu(item.id);
-  };
-  console.log('Data holder=>', data.rects);
   return (
     <>
       {
@@ -23,7 +20,7 @@ function DataHolder(props: any) {
             <thead>
               <tr>
                 <th>Label</th>
-                <th>Predicted Value</th>
+                <th className="w-50">Predicted Value</th>
                 <th>Comments</th>
               </tr>
             </thead>
@@ -34,46 +31,21 @@ function DataHolder(props: any) {
                   .sort((x, y) => x.id - y.id)
                   .map((x: any) => {
                     return (
-                      <tr key={x.id}>
-                        <td
-                          style={{
-                            backgroundColor:
-                              data?.labels?.find((l) => x.label === l.id)
-                                ?.color + '19',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {data?.labels?.find((l) => x.label === l.id)?.text}
-                        </td>
-                        <td>
-                          <div className="text-container">
-                            <div>{x.text}</div>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="text-container">
-                            <div>{x.comment}</div>
-                            <small
-                              className="pointer"
-                              onClick={() => openSettings(x)}
-                            >
-                              <Settings className="icon" />
-                            </small>
-                          </div>
-                        </td>
-                      </tr>
+                      <TableRow
+                        item={x}
+                        showContextMenu={props.showContextMenu}
+                        key={x.id}
+                      ></TableRow>
                     );
                   })}
             </tbody>
           </Table>
-
           {data.rects &&
             data.rects.filter((x) => x.label !== -1).length > 0 && (
               <Button variant="success" onClick={() => setShowModal(true)}>
                 Submit for Model Training
               </Button>
             )}
-
           <SuccessModal
             onSuccess={props.showUpload}
             show={showModal}
