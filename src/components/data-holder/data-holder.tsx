@@ -32,6 +32,7 @@ function DataHolder(props: any) {
                   .map((x: any) => {
                     return (
                       <TableRow
+                        sessionId={props.sessionId}
                         item={x}
                         showContextMenu={props.showContextMenu}
                         key={x.id}

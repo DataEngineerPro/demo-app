@@ -38,7 +38,7 @@ function ActionCard(props: any) {
       headers: new Headers({ 'content-type': 'application/json' }),
       body: body,
     })
-      .then((d) => d.json())
+      .then((d) => (d.ok ? d.json() : new Error('expired Session')))
       .then((d) => {
         console.log(d);
         console.log(d.ocr_text);
@@ -50,6 +50,9 @@ function ActionCard(props: any) {
             text: d.ocr_text,
           },
         });
+      })
+      .catch(() => {
+        props.resetSession();
       });
   };
   const update = async () => {

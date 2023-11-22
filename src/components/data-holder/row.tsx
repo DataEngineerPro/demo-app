@@ -8,7 +8,7 @@ function TableRow(props: any) {
   const [edit, setEdit] = useState(false);
   const [ocrValue, setOcrValue] = useState(props.item.text);
   const { data, updateValues } = useCanvasContext();
-  const x = props.item;
+  const x: IRect = props.item;
   const openSettings = (item: IRect) => {
     props.showContextMenu(item.id);
   };
@@ -18,23 +18,56 @@ function TableRow(props: any) {
       setEdit(false);
     }
     if (e.keyCode === 13) {
-      updateValues({
-        rect: {
-          ...props.item,
-          text: ocrValue,
-        },
-      });
-      setEdit(false);
+      updateRect();
     }
   };
   const handleSave = (e) => {
-    updateValues({
-      rect: {
-        ...props.item,
-        text: ocrValue,
-      },
-    });
+    updateRect();
+  };
+  const updateRect = async () => {
+    if (ocrValue.trim().length === 0) {
+      setOcrValue(x.text);
+      setEdit(false);
+    }
+    const updatingRect = {
+      ...x,
+      text: 'updating',
+    };
+    updateValues({ rect: updatingRect });
     setEdit(false);
+    const body = JSON.stringify({
+      id: props.sessionId,
+      coordinates: [
+        {
+          page_no: '1',
+          left: x.rect.x,
+          top: x.rect.y,
+          width: x.rect.width,
+          height: x.rect.height,
+          label_name: data.labels.find((l) => l.id == x.label)?.text,
+          comments: x.comment,
+          ocr_text: ocrValue.trim(),
+        },
+      ],
+    });
+    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
+      method: 'POST',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: body,
+    })
+      .then((d) => (d.ok ? d.json() : new Error('expired Session')))
+      .then(() => {
+        console.log('updating values');
+        updateValues({
+          rect: {
+            ...x,
+            text: ocrValue.trim(),
+          },
+        });
+      })
+      .catch(() => {
+        // props.resetSession();
+      });
   };
   return (
     <tr key={x.id}>
