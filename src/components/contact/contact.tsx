@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-function ContactForm(props) {
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+function ContactForm(props: any) {
   const countries = [
     { name: 'Afghanistan', code: 'AF' },
     { name: 'Åland Islands', code: 'AX' },
@@ -247,130 +250,172 @@ function ContactForm(props) {
     { name: 'Zambia', code: 'ZM' },
     { name: 'Zimbabwe', code: 'ZW' },
   ];
-  const [validated, setValidated] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      return;
-    }
-    setLoading(true);
-    setValidated(true);
-    if (form.checkValidity()) {
-      var formData = new FormData(event.target);
-      var json = Object.fromEntries(formData.entries());
-      fetch('/api/form', {
-        method: 'POST',
-        body: JSON.stringify(json),
-        headers: new Headers({ 'content-type': 'application/json' }),
-      })
-        .then((data) => data.json())
-        .then((data) => {
-          setLoading(false);
-          props.submit(data.session_id);
-        });
-    }
+
+  const handleSubmit = (event: any) => {
+    // event.preventDefault();
+    // event.stopPropagation();
+    // const form = event.currentTarget;
+    // if (form.checkValidity() === false) {
+    //   return;
+    // }
+    // setValidated(true);
+    // if (form.checkValidity()) {
+    //   var formData = new FormData(event.target);
+    //   var json = Object.fromEntries(formData.entries());
+    //   fetch('/api/form', {
+    //     method: 'POST',
+    //     body: JSON.stringify(json),
+    //     headers: new Headers({ 'content-type': 'application/json' }),
+    //   })
+    //     .then((data) => data.json())
+    //     .then((data) => {
+    //       props.submit(data.session_id);
+    //     });
+    // }
+    console.log(event);
   };
+  const initialValues = {
+    fullname: '',
+    workemail: '',
+    company: '',
+    country: 'India',
+    phone: '',
+    usecase: '',
+  };
+  const phoneRegExp = /\d{14}/;
+  const validationSchema = Yup.object().shape({
+    fullname: Yup.string()
+      .min(2, '*Name must have at least 2 characters')
+      .max(100, "*Name can't be longer than 100 characters")
+      .required('*Name is required'),
+    workemail: Yup.string()
+      .email('*Must be a valid work email address')
+      .max(100, '*Email must be less than 100 characters')
+      .required('*Email is required'),
+    phone: Yup.string()
+      .matches(phoneRegExp, '*Phone number is not valid')
+      .required('*Phone number required'),
+    usecase: Yup.string().required('*Use case is required'),
+  });
   return (
-    <Form
-      noValidate
-      validated={validated}
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      onChange={(e) => setValidated(e.target.checkValidity())}
     >
-      <Form.Group className="mb-3" controlId="formFullName">
-        <Form.Label>Full Name</Form.Label>
-        <Form.Control
-          name="fullname"
-          type="text"
-          placeholder="Full Name"
-          required
-        />
-      </Form.Group>
+      {(props) => (
+        <Form onSubmit={props.handleSubmit}>
+          <Form.Group className="mb-3" controlId="formFullName">
+            <Form.Label>Full Name</Form.Label>
+            <Form.Control
+              name="fullname"
+              type="text"
+              placeholder="Full Name"
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              value={props.values.fullname}
+              className={
+                props.touched.fullname && props.errors.fullname
+                  ? 'border-danger'
+                  : ''
+              }
+            />
+            {props.touched.fullname && props.errors.fullname && (
+              <div className="text-danger">{props.errors.fullname}</div>
+            )}
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Work Email</Form.Label>
-        <Form.Control
-          name="workemail"
-          type="email"
-          placeholder="Work Email"
-          required
-        />
-        <Form.Text className="text-muted">
-          We'll never share your email with anyone else.
-        </Form.Text>
-        <Form.Control.Feedback type="invalid">
-          Please provide a valid business email.
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Work Email</Form.Label>
+            <Form.Control
+              name="workemail"
+              type="email"
+              placeholder="Work Email"
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              value={props.values.workemail}
+            />
+            <Form.Text className="text-muted">
+              We'll never share your email with anyone else.
+            </Form.Text>
+            <Form.Control.Feedback type="invalid">
+              Please provide a valid business email.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formCompany">
-        <Form.Label>Company</Form.Label>
-        <Form.Control
-          name="company"
-          type="text"
-          placeholder="Company Name"
-          required
-        />
-        <Form.Control.Feedback type="invalid">
-          Please provide a valid compnay name.
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="formCompany">
+            <Form.Label>Company</Form.Label>
+            <Form.Control
+              name="company"
+              type="text"
+              placeholder="Company Name"
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              value={props.values.company}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please provide a valid compnay name.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formCountry">
-        <Form.Label>Country</Form.Label>
-        <Form.Select
-          name="country"
-          aria-label="Default select example"
-          defaultValue={'India'}
-        >
-          {countries.map((c) => {
-            return (
-              <option key={c.name} value={c.name}>
-                {c.name}
-              </option>
-            );
-          })}
-        </Form.Select>
-        <Form.Control.Feedback type="invalid">
-          Please provide a valid compnay name.
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="formCountry">
+            <Form.Label>Country</Form.Label>
+            <Form.Select
+              name="country"
+              aria-label="Default select example"
+              defaultValue={props.values.country}
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+            >
+              {countries.map((c) => {
+                return (
+                  <option key={c.name} value={c.name}>
+                    {c.name}
+                  </option>
+                );
+              })}
+            </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              Please provide a valid compnay name.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formPhoneNumber">
-        <Form.Label>Phone</Form.Label>
-        <Form.Control
-          name="phone"
-          type="tel"
-          placeholder="Phone Number"
-          minLength={10}
-          maxLength={14}
-          required
-        />
-        <Form.Control.Feedback type="invalid">
-          Please provide a valid phone number.
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="formPhoneNumber">
+            <Form.Label>Phone</Form.Label>
+            <Form.Control
+              name="phone"
+              type="tel"
+              placeholder="Phone Number"
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              value={props.values.phone}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please provide a valid phone number.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formComments">
-        <Form.Control
-          name="usecase"
-          as="textarea"
-          placeholder="Please explain your use case"
-          rows={3}
-          required
-        />
-        <Form.Control.Feedback type="invalid">
-          Provide breif description of your use case(s).
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="formComments">
+            <Form.Control
+              name="usecase"
+              as="textarea"
+              placeholder="Please explain your use case"
+              rows={3}
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              value={props.values.usecase}
+            />
+            <Form.Control.Feedback type="invalid">
+              Provide breif description of your use case(s).
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Button variant="primary" disabled={loading} type="submit">
-        {loading ? 'Submitting...' : 'Submit'}
-      </Button>
-    </Form>
+          <Button variant="primary" disabled={props.isSubmitting} type="submit">
+            {props.isSubmitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        </Form>
+      )}
+    </Formik>
   );
 }
 
