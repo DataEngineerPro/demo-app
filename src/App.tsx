@@ -154,7 +154,7 @@ function App() {
   return (
     <>
       <TopNavBar reset={reset}></TopNavBar>
-      <Container fluid={true}>
+      <Container fluid={true} className="h-100">
         {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
