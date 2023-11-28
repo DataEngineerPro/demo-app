@@ -30,11 +30,7 @@ function App() {
       color: '#00ff00',
     },
   ]);
-  const [document, setDocument] = useState<IImage>({
-    url: '/assets/sample.png',
-    width: 2000,
-    height: 2000,
-  });
+  const [document, setDocument] = useState<Array<IImage>>([]);
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     const sessionId = sessionStorage.getItem(lumenSessionId);
@@ -79,11 +75,13 @@ function App() {
           setDisplay(1);
           return;
         }
-        return {
-          url: data.presigned_url,
-          width: data.img_width,
-          height: data.img_height,
-        };
+        return arrData.map((x: any) => {
+          return {
+            url: x.presigned_url,
+            width: x.img_width,
+            height: x.img_height,
+          };
+        });
       })
       .catch(() => {
         sessionStorage.removeItem(sessionId);
@@ -167,7 +165,7 @@ function App() {
           <Canvas
             labels={labels}
             rects={boundingBoxes}
-            document={document}
+            document={document[0]}
             showUpload={showUpload}
             id={sessionStorage.getItem(lumenSessionId)}
           ></Canvas>
