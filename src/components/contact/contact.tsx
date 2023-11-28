@@ -252,27 +252,15 @@ function ContactForm(props: any) {
   ];
 
   const handleSubmit = (event: any) => {
-    // event.preventDefault();
-    // event.stopPropagation();
-    // const form = event.currentTarget;
-    // if (form.checkValidity() === false) {
-    //   return;
-    // }
-    // setValidated(true);
-    // if (form.checkValidity()) {
-    //   var formData = new FormData(event.target);
-    //   var json = Object.fromEntries(formData.entries());
-    //   fetch('/api/form', {
-    //     method: 'POST',
-    //     body: JSON.stringify(json),
-    //     headers: new Headers({ 'content-type': 'application/json' }),
-    //   })
-    //     .then((data) => data.json())
-    //     .then((data) => {
-    //       props.submit(data.session_id);
-    //     });
-    // }
-    console.log(event);
+    fetch('/api/form', {
+      method: 'POST',
+      body: JSON.stringify(event),
+      headers: new Headers({ 'content-type': 'application/json' }),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        props.submit(data.session_id);
+      });
   };
   const initialValues = {
     fullname: '',
@@ -284,6 +272,8 @@ function ContactForm(props: any) {
   };
   const phoneRegExp =
     /((?:\+|00)[17](?: |\-)?|(?:\+|00)[1-9]\d{0,2}(?: |\-)?|(?:\+|00)1\-\d{3}(?: |\-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |\-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |\-)[0-9]{3}(?: |\-)[0-9]{4})|([0-9]{7}))/g;
+  const emailRegex =
+    /^(?!.*@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g;
   const validationSchema = Yup.object().shape({
     fullname: Yup.string()
       .min(2, '*Name must have at least 2 characters')
@@ -292,7 +282,8 @@ function ContactForm(props: any) {
     workemail: Yup.string()
       .email('*Must be a valid work email address')
       .max(100, '*Work Email must be less than 100 characters')
-      .required('*Work Email is required'),
+      .required('*Work Email is required')
+      .matches(emailRegex, 'Please provide a valid work email address'),
     company: Yup.string().required('Please provide company name'),
     phone: Yup.string()
       .matches(phoneRegExp, '*Phone number is not valid')
@@ -361,7 +352,7 @@ function ContactForm(props: any) {
               onBlur={props.handleBlur}
               value={props.values.company}
               className={
-                props.touched.fullname && props.errors.company
+                props.touched.company && props.errors.company
                   ? 'border-danger'
                   : ''
               }
