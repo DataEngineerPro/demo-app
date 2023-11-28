@@ -5,17 +5,19 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function TopNavBar(props) {
   const clearSession = (e) => {
-    e.preventDefault();
-    props.reset();
+    sessionStorage.removeItem('LumenSessionId');
   };
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow rounded">
+    <Navbar expand="lg" className="bg-body-tertiary shadow rounded m-0 p-0">
       <Container fluid={true}>
-        <Navbar.Brand href="/" onClick={clearSession}>
+        <Navbar.Brand
+          href="https://www.eucloid.com/product/lumen-ai"
+          onClick={clearSession}
+        >
           <img
-            src="assets/logo-blue.png"
-            width="250"
-            height="60"
+            src="assets/logo.svg"
+            width="120"
+            height="40"
             className="d-inline-block align-top"
             alt="React Bootstrap logo"
           />

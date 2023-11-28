@@ -55,7 +55,7 @@ function UploadComponent(props: any) {
       );
       if (response.ok) {
         const resp = await response.json();
-        props.uploadComplete(resp.id);
+        props.uploadComplete(resp[0].id);
       } else {
         setLoading(false);
         alert('Problem occured with upload, please try again');
@@ -80,7 +80,7 @@ function UploadComponent(props: any) {
       );
       if (response.ok) {
         const resp = await response.json();
-        props.uploadComplete(resp.id);
+        props.uploadComplete(resp[0].id);
       } else {
         setLoading(false);
         alert('Problem occured with upload, please try again');

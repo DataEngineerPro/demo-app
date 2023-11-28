@@ -13,3 +13,7 @@ body {
 .canvasHolder {
   border: 1px solid black;
 }
+
+.container-fluid > div {
+  height: 100%;
+}
