@@ -282,7 +282,8 @@ function ContactForm(props: any) {
     phone: '',
     usecase: '',
   };
-  const phoneRegExp = /\d{14}/;
+  const phoneRegExp =
+    /((?:\+|00)[17](?: |\-)?|(?:\+|00)[1-9]\d{0,2}(?: |\-)?|(?:\+|00)1\-\d{3}(?: |\-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |\-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |\-)[0-9]{3}(?: |\-)[0-9]{4})|([0-9]{7}))/g;
   const validationSchema = Yup.object().shape({
     fullname: Yup.string()
       .min(2, '*Name must have at least 2 characters')
@@ -290,12 +291,14 @@ function ContactForm(props: any) {
       .required('*Name is required'),
     workemail: Yup.string()
       .email('*Must be a valid work email address')
-      .max(100, '*Email must be less than 100 characters')
-      .required('*Email is required'),
+      .max(100, '*Work Email must be less than 100 characters')
+      .required('*Work Email is required'),
+    company: Yup.string().required('Please provide company name'),
     phone: Yup.string()
       .matches(phoneRegExp, '*Phone number is not valid')
       .required('*Phone number required'),
     usecase: Yup.string().required('*Use case is required'),
+    country: Yup.string().required('Please select country'),
   });
   return (
     <Formik
@@ -334,13 +337,18 @@ function ContactForm(props: any) {
               onChange={props.handleChange}
               onBlur={props.handleBlur}
               value={props.values.workemail}
+              className={
+                props.touched.workemail && props.errors.workemail
+                  ? 'border-danger'
+                  : ''
+              }
             />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid business email.
-            </Form.Control.Feedback>
+            {props.touched.workemail && props.errors.workemail && (
+              <div className="text-danger">{props.errors.workemail}</div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formCompany">
@@ -352,10 +360,15 @@ function ContactForm(props: any) {
               onChange={props.handleChange}
               onBlur={props.handleBlur}
               value={props.values.company}
+              className={
+                props.touched.fullname && props.errors.company
+                  ? 'border-danger'
+                  : ''
+              }
             />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid compnay name.
-            </Form.Control.Feedback>
+            {props.touched.company && props.errors.company && (
+              <div className="text-danger">{props.errors.company}</div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formCountry">
@@ -366,6 +379,11 @@ function ContactForm(props: any) {
               defaultValue={props.values.country}
               onChange={props.handleChange}
               onBlur={props.handleBlur}
+              className={
+                props.touched.country && props.errors.country
+                  ? 'border-danger'
+                  : ''
+              }
             >
               {countries.map((c) => {
                 return (
@@ -375,9 +393,9 @@ function ContactForm(props: any) {
                 );
               })}
             </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid compnay name.
-            </Form.Control.Feedback>
+            {props.touched.country && props.errors.country && (
+              <div className="text-danger">{props.errors.country}</div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formPhoneNumber">
@@ -389,10 +407,13 @@ function ContactForm(props: any) {
               onChange={props.handleChange}
               onBlur={props.handleBlur}
               value={props.values.phone}
+              className={
+                props.touched.phone && props.errors.phone ? 'border-danger' : ''
+              }
             />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid phone number.
-            </Form.Control.Feedback>
+            {props.touched.phone && props.errors.phone && (
+              <div className="text-danger">{props.errors.phone}</div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formComments">
@@ -404,10 +425,15 @@ function ContactForm(props: any) {
               onChange={props.handleChange}
               onBlur={props.handleBlur}
               value={props.values.usecase}
+              className={
+                props.touched.usecase && props.errors.usecase
+                  ? 'border-danger'
+                  : ''
+              }
             />
-            <Form.Control.Feedback type="invalid">
-              Provide breif description of your use case(s).
-            </Form.Control.Feedback>
+            {props.touched.usecase && props.errors.usecase && (
+              <div className="text-danger">{props.errors.usecase}</div>
+            )}
           </Form.Group>
 
           <Button variant="primary" disabled={props.isSubmitting} type="submit">
