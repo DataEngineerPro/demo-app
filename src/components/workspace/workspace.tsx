@@ -8,6 +8,7 @@ import ThubmnailSlider from '../thumbnail-slider/thubmnail-slider';
 import LabelStack from '../labels/label-stack';
 import DataHolder from '../data-holder/data-holder';
 import LoadingComponent from '../loading/loading';
+import './workspace.scss';
 
 function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
   const { data, setInitialData, updatePage } = useCanvasContext();
@@ -72,7 +73,7 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
         <ThubmnailSlider pageChange={pageChange}></ThubmnailSlider>
       </div>
 
-      <div className="ms-3 col-6 p-0">
+      <div className="ms-3 col-7 p-0">
         {!loading && (
           <Canvas
             labels={labels}

@@ -153,8 +153,8 @@ function Canvas(props: any) {
         menuRef.current.style.top =
           divRef.current.offsetTop +
           selectedbox?.rect?.y * aspectHeight +
-          4 +
-          'px';
+          -divRef.current.sc;
+        4 + 'px';
         menuRef.current.style.left =
           divRef.current.offsetLeft +
           selectedbox?.rect?.x * aspectWidth +
@@ -213,6 +213,7 @@ function Canvas(props: any) {
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
             tabIndex={0}
+            className="canvascontainer"
           >
             {divHeight > 0 && divWidth > 0 && (
               <Stage
