@@ -9,6 +9,7 @@ export interface IImage {
   url: string;
   height: number;
   width: number;
+  page: number;
 }
 
 export interface IRect {
@@ -23,8 +24,9 @@ export interface IRect {
 export interface ICanvasStateType {
   rects: Array<IRect>;
   labels: Array<ILabel>;
-  document?: IImage;
+  document?: Array<IImage>;
   nextRectId: number;
+  page: number;
 }
 
 export interface CanvasContextProviderProps {
@@ -37,6 +39,7 @@ export interface CanvasContextReturnType {
     rects: Array<IRect>;
     labels: Array<ILabel>;
     document: IImage;
+    page?: number;
   }) => void;
   updateValues: (args: { rect: IRect }) => void;
   addRect: (args: { rect: IRect; text: string }) => void;

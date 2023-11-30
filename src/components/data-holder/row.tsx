@@ -41,7 +41,7 @@ function TableRow(props: any) {
       id: props.sessionId,
       coordinates: [
         {
-          page_no: '1',
+          page_no: data.page,
           left: x.rect.x,
           top: x.rect.y,
           width: x.rect.width,

@@ -25,16 +25,23 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     rects: [],
     labels: [],
     document: null,
+    page: 0,
   });
 
   const setInitialData = useCallback(
-    (args: { rects: Array<IRect>; labels: Array<any>; document: any }) => {
+    (args: {
+      rects: Array<IRect>;
+      labels: Array<any>;
+      document: any;
+      page?: number;
+    }) => {
       dispatch({
         type: ActionTypes.SET_INITIAL_DATA,
         payload: {
           rects: args.rects,
           labels: args.labels,
           document: args.document,
+          page: args.page || 1,
         },
       });
     },
@@ -88,6 +95,16 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     });
   }, []);
 
+  const updatePage = useCallback((args: { page: number; rects: IRect[] }) => {
+    dispatch({
+      type: ActionTypes.UPDATE_PAGE,
+      payload: {
+        page: args.page,
+        rects: args.rects,
+      },
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       data,
@@ -97,6 +114,7 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
       selectRect,
       removeRect,
       addLabel,
+      updatePage,
     }),
     [
       data,
@@ -106,6 +124,7 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
       selectRect,
       removeRect,
       addLabel,
+      updatePage,
     ]
   );
 

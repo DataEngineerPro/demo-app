@@ -4,7 +4,7 @@ import { ICanvasStateType, ILabel, IRect } from './contextType';
 
 const setInitialData = (
   state: ICanvasStateType,
-  payload: { rects: IRect[]; labels: ILabel[]; document: any }
+  payload: { rects: IRect[]; labels: ILabel[]; document: any; page?: number }
 ) => {
   return {
     ...state,
@@ -12,6 +12,7 @@ const setInitialData = (
     labels: payload.labels,
     document: payload.document,
     nextRectId: payload.rects.length + 1,
+    page: payload.page || 1,
   };
 };
 
@@ -97,6 +98,17 @@ const addLabel = (
   };
 };
 
+const updatePage = (
+  state: ICanvasStateType,
+  payload: { page: number; rects: IRect[] }
+) => {
+  return {
+    ...state,
+    page: payload.page,
+    rects: payload.rects,
+  };
+};
+
 export const reducer = (state: ICanvasStateType, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_INITIAL_DATA:
@@ -111,6 +123,8 @@ export const reducer = (state: ICanvasStateType, action: Action) => {
       return removeRect(state, action.payload);
     case ActionTypes.ADD_LABEL:
       return addLabel(state, action.payload);
+    case ActionTypes.UPDATE_PAGE:
+      return updatePage(state, action.payload);
     default:
       return state;
   }

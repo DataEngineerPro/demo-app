@@ -51,8 +51,7 @@
 }
 
 .upload-container {
-  display: flex;
-  flex: 1;
+  height: calc(100vh - 30px);
   background: linear-gradient(0deg, #cae5ff, #cae5ff),
     linear-gradient(0deg, #ffffff, #ffffff);
 }
