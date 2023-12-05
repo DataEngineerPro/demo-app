@@ -5,7 +5,7 @@ import './thumbnail-slider.scss';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useRef } from 'react';
 
-function ThumbnailSliderComponent({ pageChange }) {
+function ThumbnailSliderComponent({ height, pageChange }) {
   const { data } = useCanvasContext();
   const sliderRef = useRef(null);
   const settings = {
@@ -34,7 +34,7 @@ function ThumbnailSliderComponent({ pageChange }) {
   return (
     <>
       {data && data.document && data.document.length > 0 && (
-        <div className="thubmnail-slider">
+        <div className="thubmnail-slider" style={{height:height}}>
           <div className="header small my-2 mx-auto">
             <label className="mx-1">Page</label>
             <input

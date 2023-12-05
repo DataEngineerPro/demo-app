@@ -24,8 +24,9 @@ function Canvas(props: any) {
     const aspectRatio = props.document.height / props.document.width;
     setDivWidth(Math.round(divRef.current?.offsetWidth - 2));
     setDivHeight(Math.round((divRef.current?.offsetWidth - 2) * aspectRatio));
+    props.updateHeight(Math.round((divRef.current?.offsetWidth - 2) * aspectRatio));
     setAspectWidth(
-      Math.round(divRef.current?.offsetWidth - 2) / props.document?.width
+      Math.round((divRef.current?.offsetWidth - 2)) / (props.document?.width)
     );
     setAspectHeight(
       (Math.round(divRef.current?.offsetWidth - 2) * aspectRatio) /
@@ -151,12 +152,9 @@ function Canvas(props: any) {
       if (menuRef.current && divRef.current) {
         menuRef.current.style.display = 'initial';
         menuRef.current.style.top =
-          divRef.current.offsetTop +
           selectedbox?.rect?.y * aspectHeight +
-          -divRef.current.sc;
         4 + 'px';
         menuRef.current.style.left =
-          divRef.current.offsetLeft +
           selectedbox?.rect?.x * aspectWidth +
           selectedbox?.rect?.width * aspectWidth +
           4 +
@@ -213,7 +211,7 @@ function Canvas(props: any) {
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
             tabIndex={0}
-            className="canvascontainer"
+            className="canvascontainer position-relative"
           >
             {divHeight > 0 && divWidth > 0 && (
               <Stage
@@ -279,9 +277,7 @@ function Canvas(props: any) {
                 </Layer>
               </Stage>
             )}
-          </div>
-
-          <div className="menu" ref={menuRef}>
+            <div className="menu" ref={menuRef}>
             {contextRect && (
               <ActionCard
                 rect={contextRect}
@@ -290,6 +286,9 @@ function Canvas(props: any) {
               ></ActionCard>
             )}
           </div>
+          </div>
+
+          
         </>
       )}
     </>

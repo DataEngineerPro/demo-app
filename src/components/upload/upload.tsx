@@ -111,7 +111,7 @@ function UploadComponent(props: any) {
           &nbsp;
         </div>
 
-        <div className="col-6 align-items-center d-flex justify-content-center m-auto upload-container flex-column">
+        <div className="col-6 align-items-center d-flex justify-content-center m-auto h-100 flex-column">
           {loading && <LoadingComponent></LoadingComponent>}
           {showContact && <ContactForm submit={formsubmit}></ContactForm>}
           <form

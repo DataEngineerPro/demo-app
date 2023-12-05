@@ -15,6 +15,7 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
   const [loading, setLoading] = useState(false);
   const [showBoundingBox, setShowBoundingBox] = useState<number | null>(null);
   const [image, setImage] = useState(images.find((x) => x.page === page));
+  const [maxHeight,setMaxHeight]=useState(0);
   const fetchData = async (page: number) => {
     const boundingBoxes = await fetch(
       import.meta.env.VITE_API_PREFIX +
@@ -34,7 +35,7 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
           },
           id: index + 1,
           label: x.label_name
-            ? labels.find((l) => l.text === x.label_name).id
+            ? labels.find((l) => l.text === x.label_name)?.id
             : 1,
           text: x.ocr_text,
           comment: x.comments,
@@ -67,10 +68,13 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
   const pageChange = (newPage: number) => {
     fetchData(newPage);
   };
+  const updateHeight=(h)=>{
+    setMaxHeight(h);
+  }
   return (
     <div className="row bodycontainer">
       <div className="col-1 left-panel m-0 p-0">
-        <ThubmnailSlider pageChange={pageChange}></ThubmnailSlider>
+        <ThubmnailSlider height={maxHeight} pageChange={pageChange}></ThubmnailSlider>
       </div>
 
       <div className="ms-3 col-7 p-0">
@@ -83,6 +87,8 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
             id={sessionId}
             openContextMenu={showBoundingBox}
             closeContextMenu={() => setShowBoundingBox(null)}
+            updateHeight={updateHeight}
+            
           ></Canvas>
         )}
         {loading && <LoadingComponent></LoadingComponent>}
