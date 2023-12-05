@@ -22,15 +22,15 @@ function Canvas(props: any) {
     if (!divRef.current || !props.document?.width || !props.document.height)
       return;
     const aspectRatio = props.document.height / props.document.width;
-    setDivWidth(Math.round(divRef.current?.offsetWidth - 2));
-    setDivHeight(Math.round((divRef.current?.offsetWidth - 2) * aspectRatio));
-    props.updateHeight(Math.round((divRef.current?.offsetWidth - 2) * aspectRatio));
+    const docWidth = Math.round(divRef.current?.offsetWidth - 2);
+    const docHeight = Math.round((divRef.current?.offsetWidth - 2) * aspectRatio);
+    setDivWidth(docWidth);
+    setDivHeight(docHeight);
+    props.updateHeight(docHeight);
     setAspectWidth(
-      Math.round((divRef.current?.offsetWidth - 2)) / (props.document?.width)
-    );
+      docWidth / props.document?.width);
     setAspectHeight(
-      (Math.round(divRef.current?.offsetWidth - 2) * aspectRatio) /
-        props.document?.height
+      docHeight / props.document?.height
     );
   }, [divRef.current, props.document]);
   const [image] = useImage(props.document?.url);
@@ -49,6 +49,9 @@ function Canvas(props: any) {
       showContextMenu(data.rects[data.rects.length - 1].id);
     }
   }, [data]);
+  useEffect(()=>{
+    divRef.current?.scrollTo(0,0)
+  },[props.image])
   useEffect(() => {
     if (!props.openContextMenu) return;
     showContextMenu(props.openContextMenu);
@@ -147,19 +150,20 @@ function Canvas(props: any) {
     setContextRect(null);
     setTimeout(() => {
       setContextRect(selectedbox);
-      console.log(selectedbox);
+      console.log("Selected Box=>", selectedbox, aspectHeight, aspectWidth);
       // show menu
       if (menuRef.current && divRef.current) {
         menuRef.current.style.display = 'initial';
         menuRef.current.style.top =
           selectedbox?.rect?.y * aspectHeight +
-        4 + 'px';
+          4 + 'px';
         menuRef.current.style.left =
           selectedbox?.rect?.x * aspectWidth +
           selectedbox?.rect?.width * aspectWidth +
           4 +
           'px';
       }
+      menuRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
     }, 300);
   };
 
@@ -211,7 +215,7 @@ function Canvas(props: any) {
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
             tabIndex={0}
-            className="canvascontainer position-relative"
+            className='position-relative'
           >
             {divHeight > 0 && divWidth > 0 && (
               <Stage
@@ -277,18 +281,19 @@ function Canvas(props: any) {
                 </Layer>
               </Stage>
             )}
-            <div className="menu" ref={menuRef}>
-            {contextRect && (
-              <ActionCard
-                rect={contextRect}
-                close={closeContext}
-                sessionId={props.id}
-              ></ActionCard>
-            )}
-          </div>
+            <div className="menu" ref={menuRef} tabIndex={0}>
+              {contextRect && (
+                <ActionCard
+                  rect={contextRect}
+                  close={closeContext}
+                  sessionId={props.id}
+                ></ActionCard>
+              )}
+            </div>
           </div>
 
-          
+
+
         </>
       )}
     </>

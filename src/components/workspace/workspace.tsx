@@ -53,6 +53,7 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
       });
     }
     setImage(images.find((x) => x.page === page));
+    document.querySelector('.bodycontainer').scrollTo(0,0)
   };
   useEffect(() => {
     setInitialData({

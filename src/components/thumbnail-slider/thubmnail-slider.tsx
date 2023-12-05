@@ -7,30 +7,7 @@ import { useRef } from 'react';
 
 function ThumbnailSliderComponent({ height, pageChange }) {
   const { data } = useCanvasContext();
-  const sliderRef = useRef(null);
-  const settings = {
-    dots: false,
-    infinite: false,
-    slidesToShow: 5,
-    slidesToScroll: 5,
-    vertical: true,
-    verticalSwiping: true,
-    arrows: false,
-    beforeChange: function (currentSlide: any, nextSlide: any) {
-      console.log('before change', currentSlide, nextSlide);
-    },
-    afterChange: function (currentSlide: any) {
-      console.log('after change', currentSlide);
-    },
-  };
-  const slide = (forward: boolean) => {
-    if (!sliderRef.current) return;
-    if (forward) {
-      sliderRef.current.slickNext();
-    } else {
-      sliderRef.current.slickPrev();
-    }
-  };
+  
   return (
     <>
       {data && data.document && data.document.length > 0 && (
@@ -50,7 +27,7 @@ function ThumbnailSliderComponent({ height, pageChange }) {
           </div>
 
           <div className="slider-container mx-auto">
-            {/* <Slider {...settings} ref={sliderRef}> */}
+            
             {data.document?.map((x) => {
               return (
                 <div
@@ -65,7 +42,7 @@ function ThumbnailSliderComponent({ height, pageChange }) {
                 </div>
               );
             })}
-            {/* </Slider> */}
+            
           </div>
         </div>
       )}

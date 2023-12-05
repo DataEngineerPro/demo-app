@@ -106,6 +106,7 @@ const updatePage = (
     ...state,
     page: payload.page,
     rects: payload.rects,
+    nextRectId:payload.rects.length+1
   };
 };
 
