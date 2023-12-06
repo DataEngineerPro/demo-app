@@ -26,8 +26,8 @@ function ThumbnailSliderComponent({ height, pageChange }) {
             />
           </div>
 
-          <div className="slider-container mx-auto">
-            
+          <div className="slider-container w-100">
+            <div className="thumbnail-container mx-auto">
             {data.document?.map((x) => {
               return (
                 <div
@@ -42,7 +42,7 @@ function ThumbnailSliderComponent({ height, pageChange }) {
                 </div>
               );
             })}
-            
+            </div>
           </div>
         </div>
       )}
