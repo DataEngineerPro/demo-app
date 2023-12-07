@@ -2,69 +2,51 @@ import Slider from 'react-slick';
 import { useCanvasContext } from '../canvas/context/context';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import './thumbnail-slider.scss';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useRef } from 'react';
 
-function ThumbnailSliderComponent() {
+function ThumbnailSliderComponent({ height, pageChange }) {
   const { data } = useCanvasContext();
-  const settings = {
-    dots: false,
-    infinite: false,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    vertical: true,
-    verticalSwiping: true,
-    arrows: false,
-    beforeChange: function (currentSlide: any, nextSlide: any) {
-      console.log('before change', currentSlide, nextSlide);
-    },
-    afterChange: function (currentSlide: any) {
-      console.log('after change', currentSlide);
-    },
-  };
+  
   return (
-    <div>
-      <div className="d-flex align-items-center justify-content-center">
-        <Button
-          disabled={true}
-          variant="outline-dark"
-          size="sm"
-          className="shadow rounded"
-        >
-          <ChevronUp size={24}></ChevronUp>
-        </Button>
-        <div className="m-2"></div>
-        <Button
-          disabled={true}
-          variant="outline-dark"
-          size="sm"
-          className="shadow rounded"
-        >
-          <ChevronDown size={24}></ChevronDown>
-        </Button>
-      </div>
-      <div className="slider-container">
-        <Slider {...settings}>
-          <div className="selected-thumbnail d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2">
-            <img
-              src={data.document?.url}
-              className="img-thumbnail rounded mx-auto"
+    <>
+      {data && data.document && data.document.length > 0 && (
+        <div className="thubmnail-slider" style={{height:height}}>
+          <div className="header small my-2 mx-auto">
+            <label className="mx-1">Page</label>
+            <input
+              type="text"
+              readOnly
+              disabled={true}
+              value={`${data.page}`}
+              style={{
+                width: '5ch',
+                textAlign: 'center',
+              }}
             />
           </div>
-          {/* <div className="d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2">
-            <img
-              src={data.document?.url}
-              className="img-thumbnail rounded mx-auto"
-            />
+
+          <div className="slider-container w-100">
+            <div className="thumbnail-container mx-auto">
+            {data.document?.map((x) => {
+              return (
+                <div
+                  key={x.page}
+                  onClick={() => pageChange(x.page)}
+                  className={`d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2 pointer ${
+                    x.page === data.page ? 'selected-thumbnail' : ''
+                  }`}
+                >
+                  <img src={x.url} className="img-thumbnail rounded mx-auto" />
+                  <div className="page-number">{x.page}</div>
+                </div>
+              );
+            })}
+            </div>
           </div>
-          <div className="d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2">
-            <img
-              src={data.document?.url}
-              className="img-thumbnail rounded mx-auto"
-            /> 
-          </div>  */}
-        </Slider>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 

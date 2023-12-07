@@ -23,7 +23,7 @@ function ActionCard(props: any) {
       id: props.sessionId,
       coordinates: [
         {
-          page_no: '1',
+          page_no: data.page,
           left: newRect.x,
           top: newRect.y,
           width: newRect.width,
@@ -72,7 +72,7 @@ function ActionCard(props: any) {
       id: props.sessionId,
       coordinates: [
         {
-          page_no: '1',
+          page_no: data.page,
           left: props.rect.rect.x,
           top: props.rect.rect.y,
           width: props.rect.rect.width,

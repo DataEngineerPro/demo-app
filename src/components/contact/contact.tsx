@@ -428,7 +428,7 @@ function ContactForm(props: any) {
           </Form.Group>
 
           <Button variant="primary" disabled={props.isSubmitting} type="submit">
-            {props.isSubmitting ? 'Submitting...' : 'Submit'}
+            Next
           </Button>
         </Form>
       )}

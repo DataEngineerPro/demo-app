@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { IImage, ILabel } from './components/canvas/context/contextType';
 import UploadComponent from './components/upload/upload';
 import LoadingComponent from './components/loading/loading';
+import Workspace from './components/workspace/workspace';
 
 function App() {
   const lumenSessionId = 'LumenSessionId';
@@ -61,7 +62,7 @@ function App() {
     setBoundingBoxes(boundingBoxes);
   };
   const fetchData = async (sessionId: string) => {
-    const documentData = await fetch(
+    const documentData: Array<IImage> = await fetch(
       import.meta.env.VITE_API_PREFIX + '/api/upload?id=' + sessionId
     )
       .then((data) => {
@@ -80,6 +81,7 @@ function App() {
             url: x.presigned_url,
             width: x.img_width,
             height: x.img_height,
+            page: x.page_no,
           };
         });
       })
@@ -131,6 +133,7 @@ function App() {
     if (apilabels.length > 0) {
       setLabels(labelDataSet);
     }
+    console.log('Images=>', documentData);
     setDocument(documentData);
     setDisplay(2);
   };
@@ -152,7 +155,7 @@ function App() {
   return (
     <>
       <TopNavBar reset={reset}></TopNavBar>
-      <Container fluid={true} className="h-100">
+      <Container fluid={true} className="p-0">
         {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
@@ -162,13 +165,13 @@ function App() {
           ></UploadComponent>
         )}
         {display === 2 && (
-          <Canvas
+          <Workspace
             labels={labels}
-            rects={boundingBoxes}
-            document={document[0]}
-            showUpload={showUpload}
-            id={sessionStorage.getItem(lumenSessionId)}
-          ></Canvas>
+            sessionId={sessionStorage.getItem(lumenSessionId)}
+            boundingBoxes={boundingBoxes}
+            images={document}
+            page={1}
+          ></Workspace>
         )}
       </Container>
     </>

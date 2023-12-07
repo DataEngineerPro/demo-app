@@ -1,6 +1,42 @@
 .selected-thumbnail {
   border: 1px solid blue;
 }
+
 .slider-container {
-  //   height: calc(100vh - 110px);
+  overflow: auto;
+  .thumbnail-container {
+    width: 66px;
+
+    .page-number {
+      color: #212121;
+
+      /* typography/caption */
+      font-family: Poppins;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.thubmnail-slider {
+  display: flex;
+  width: 130px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-right: 1px solid #bbb;
+  background: #f8f9fa;
+}
+
+.header {
+  display: flex;
+  padding: 16px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #bbb;
+  background: #f8f9fa;
 }

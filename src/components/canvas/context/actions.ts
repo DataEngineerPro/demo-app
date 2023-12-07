@@ -7,8 +7,9 @@ export enum ActionTypes {
   ADD_RECT = 'ADD_RECT',
   SELECT_RECT = 'SELECT_RECT',
   REMOVE_RECT = 'REMOVE_RECT',
-  UPDATE_RECT = 'UPDATE_RECT',
   ADD_LABEL = 'ADD_LABEL',
+  UPDATE_PAGE = 'UPDATE_PAGE',
+  RESET = 'RESET',
 }
 
 interface SetInitialDataAction {
@@ -16,7 +17,8 @@ interface SetInitialDataAction {
   payload: {
     rects: Array<IRect>;
     labels: Array<ILabel>;
-    document: IImage;
+    document: Array<IImage>;
+    page?: number;
   };
 }
 
@@ -31,6 +33,7 @@ interface AddRectAction {
   type: ActionTypes.ADD_RECT;
   payload: {
     rect: IRect;
+    text: string;
   };
 }
 
@@ -56,10 +59,19 @@ interface AddLabel {
   };
 }
 
+interface UpdatePage {
+  type: ActionTypes.UPDATE_PAGE;
+  payload: {
+    page: number;
+    rects: Array<IRect>;
+  };
+}
+
 export type Action =
   | SetInitialDataAction
   | UpdateLabelValueAction
   | AddRectAction
   | SelectRectAction
   | RemoveRectAction
-  | AddLabel;
+  | AddLabel
+  | UpdatePage;

@@ -3,49 +3,38 @@ import { useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Rect, Image } from 'react-konva';
 import 'konva/lib/shapes/Rect';
 import useImage from 'use-image';
-import { CanvasContextProvider, useCanvasContext } from './context/context';
+import { useCanvasContext } from './context/context';
 import { IRect } from './context/contextType';
 import ActionCard from '../action-card/card';
 import './canvas.scss';
-import DataHolder from '../data-holder/data-holder';
-import LabelStack from '../labels/label-stack';
-import ThubmnailSlider from '../thumbnail-slider/thubmnail-slider';
-import { Circle, Info } from 'react-feather';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Canvas(props: any) {
+  console.log(props);
   const divRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [divWidth, setDivWidth] = useState<number>(0);
   const [divHeight, setDivHeight] = useState<number>(0);
   const [aspectWidth, setAspectWidth] = useState(1);
   const [aspectHeight, setAspectHeight] = useState(1);
-  const { data, setInitialData, addRect, selectRect, removeRect } =
-    useCanvasContext();
+  const { data, addRect, selectRect, removeRect } = useCanvasContext();
 
   useEffect(() => {
-    console.log(props);
-    setInitialData({
-      rects: props.rects || [],
-      labels: props.labels || [],
-      document: props.document,
-    });
-  }, [props]);
-
-  useEffect(() => {
-    if (!divRef.current || !data.document?.width || !data.document.height)
+    if (!divRef.current || !props.document?.width || !props.document.height)
       return;
-    setDivWidth(Math.round(divRef.current?.offsetWidth - 2));
-    setDivHeight(Math.round((divRef.current?.offsetWidth - 2) * 1.414));
+    const aspectRatio = props.document.height / props.document.width;
+    const docWidth = Math.round(divRef.current?.offsetWidth - 2);
+    const docHeight = Math.round((divRef.current?.offsetWidth - 2) * aspectRatio);
+    setDivWidth(docWidth);
+    setDivHeight(docHeight);
+    props.updateHeight(docHeight);
     setAspectWidth(
-      Math.round(divRef.current?.offsetWidth - 2) / data.document?.width
-    );
+      docWidth / props.document?.width);
     setAspectHeight(
-      (Math.round(divRef.current?.offsetWidth - 2) * 1.414) /
-        data.document?.height
+      docHeight / props.document?.height
     );
-  }, [divRef.current, data.document]);
-  const [image] = useImage(data.document?.url);
+  }, [divRef.current, props.document]);
+  const [image] = useImage(props.document?.url);
+  console.log('IMAGE==>', image, props.document?.url);
   const [tempRect, setTempRect] = useState<any>(null);
   const [originalCords, setOriginalCords] = useState<any>(null);
   const [newCords, setNewCords] = useState<any>(null);
@@ -60,6 +49,13 @@ function Canvas(props: any) {
       showContextMenu(data.rects[data.rects.length - 1].id);
     }
   }, [data]);
+  useEffect(()=>{
+    divRef.current?.scrollTo(0,0)
+  },[props.image])
+  useEffect(() => {
+    if (!props.openContextMenu) return;
+    showContextMenu(props.openContextMenu);
+  }, [props.openContextMenu]);
   const mousedown = (e: any) => {
     e.evt.preventDefault();
     if (e.evt.button !== 0) return;
@@ -154,38 +150,23 @@ function Canvas(props: any) {
     setContextRect(null);
     setTimeout(() => {
       setContextRect(selectedbox);
-      console.log(selectedbox);
+      console.log("Selected Box=>", selectedbox, aspectHeight, aspectWidth);
       // show menu
       if (menuRef.current && divRef.current) {
         menuRef.current.style.display = 'initial';
         menuRef.current.style.top =
-          divRef.current.offsetTop +
           selectedbox?.rect?.y * aspectHeight +
-          4 +
-          'px';
+          4 + 'px';
         menuRef.current.style.left =
-          divRef.current.offsetLeft +
           selectedbox?.rect?.x * aspectWidth +
           selectedbox?.rect?.width * aspectWidth +
           4 +
           'px';
       }
+      menuRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
     }, 300);
   };
 
-  const tooltip = (
-    <Tooltip id="tooltip">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eu lorem
-      vitae odio ultricies ullamcorper eget eu mauris. Nulla ultricies purus non
-      ornare tempor. Nam dignissim nibh et eleifend placerat. Cras tempus magna
-      arcu, id congue sapien rutrum ac. Nunc commodo mattis enim, sit amet
-      volutpat mi volutpat non. Nulla sit amet fringilla massa, in ultrices dui.
-      Aenean gravida pellentesque fermentum. Ut egestas, mi ut suscipit laoreet,
-      lorem orci euismod risus, maximus malesuada lacus est at purus. Nunc eu
-      tellus justo. Mauris ultrices auctor viverra. Vivamus sit amet ligula
-      metus. Ut molestie auctor consectetur.
-    </Tooltip>
-  );
   const handleKeyBoard = (e: any) => {
     e.preventDefault();
     if (e.keyCode === 27 && isListening) {
@@ -196,7 +177,7 @@ function Canvas(props: any) {
         id: props.id,
         coordinates: [
           {
-            page_no: '1',
+            page_no: data.page,
             left: selectedRect.rect.x,
             top: selectedRect.rect.y,
             width: selectedRect.rect.width,
@@ -222,21 +203,19 @@ function Canvas(props: any) {
       setSelectedRect(null);
     }
     setContextRect(null);
+    props.closeContextMenu();
   };
 
   return (
     <>
       {data && (
-        <div className="row">
-          <div className="col-1 left-panel">
-            <ThubmnailSlider></ThubmnailSlider>
-          </div>
+        <>
           <div
-            className="ms-3 col-6 p-0 shadow rounded"
             ref={divRef}
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
             tabIndex={0}
+            className='position-relative'
           >
             {divHeight > 0 && divWidth > 0 && (
               <Stage
@@ -302,91 +281,23 @@ function Canvas(props: any) {
                 </Layer>
               </Stage>
             )}
-          </div>
-
-          <div className="col ms-3 right-panel bg-light">
-            <div className="d-flex flex-column mb-2">
-              <h6>
-                How to Get Started with Lumen AI Demo Version: Your Easy Guide{' '}
-              </h6>
-              <ul className="ollist">
-                <li className="m-0 p-0">
-                  Start by creating a new label for each data field or table you
-                  wish to extract. Then, select the specific area on the page
-                  where these fields or tables are located.
-                </li>
-                <li className="m-0 p-0">
-                  Assign labels to each field or table. Feel free to add any
-                  optional comments to specify special processing needs, such as
-                  data quality checks or transformations post extraction.
-                </li>
-                <li className=" m-0 p-0">
-                  After labeling all fields, submit your worksheet. This lets us
-                  know exactly what you need, so we can begin tailoring a
-                  Machine Learning model just for you.
-                </li>
-                <li className="m-0 p-0">
-                  For demo versions, model preparation is swift - generally
-                  completed in under 4 hours. Our customer support team will
-                  keep you in the loop and inform you the moment your model is
-                  ready.
-                </li>
-                <li className=" m-0 p-0">
-                  Once your model is trained, it's all set to efficiently
-                  process bulk quantities of similar documents. Efficient,
-                  effective, and tailored just for you!
-                </li>
-              </ul>
-            </div>
-            <div className="label-holder">
-              <div className="d-flex flex-row align-items-baseline">
-                <h6>Labels Legend</h6>
-                {/* <OverlayTrigger placement="right" overlay={tooltip}>
-                  <div className="px-1">
-                    <Info size={16} fill="black" color="white"></Info>
-                  </div>
-                </OverlayTrigger> */}
-              </div>
-              <LabelStack sessionId={props.id} />
-            </div>
-            <div className="d-flex flex-row align-items-baseline">
-              <h6>Identified Labels</h6>
-              {/* <OverlayTrigger placement="right" overlay={tooltip}>
-                <div className="px-1">
-                  <Info size={16} fill="black" color="white"></Info>
-                </div>
-              </OverlayTrigger> */}
-            </div>
-            <div className="data-holder">
-              <DataHolder
-                showUpload={props.showUpload}
-                showContextMenu={showContextMenu}
-                sessionId={props.id}
-              />
+            <div className="menu" ref={menuRef} tabIndex={0}>
+              {contextRect && (
+                <ActionCard
+                  rect={contextRect}
+                  close={closeContext}
+                  sessionId={props.id}
+                ></ActionCard>
+              )}
             </div>
           </div>
 
-          <div className="menu" ref={menuRef}>
-            {contextRect && (
-              <ActionCard
-                rect={contextRect}
-                close={closeContext}
-                sessionId={props.id}
-              ></ActionCard>
-            )}
-          </div>
-        </div>
+
+
+        </>
       )}
     </>
   );
 }
 
-const withCanvasContext = (Component: React.FC<any>) => {
-  return (props: any) => (
-    <CanvasContextProvider>
-      <Component {...props} />
-    </CanvasContextProvider>
-  );
-};
-
-export default withCanvasContext(Canvas);
+export default Canvas;
