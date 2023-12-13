@@ -35,13 +35,13 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
           },
           id: index + 1,
           label: x.label_name
-            ? labels.find((l) => l.text === x.label_name)?.id
+            ? data.labels.find((l) => l.text === x.label_name)?.id
             : 1,
           text: x.ocr_text,
           comment: x.comments,
         };
       });
-      console.log('NEW BOUNDINGBOX ==>', newBoundingBoxes);
+      console.log('NEW BOUNDINGBOX ==>', newBoundingBoxes,data.labels);
       updatePage({
         page: page,
         rects: newBoundingBoxes,

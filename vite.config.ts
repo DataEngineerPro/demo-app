@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://34.205.255.31:8000/api/',
+        target: 'https://lumenai.eucloid.com/api/',
         // target: 'http://44.211.182.152:8000/api/',
         changeOrigin: true,
         secure: false,
