@@ -43,6 +43,11 @@ function UploadComponent(props: any) {
         alert('Only single image file is supported');
         return;
       }
+      if (e.dataTransfer.files[0].size > import.meta.env.VITE_MAX_FILE_SIZE_IN_MB*1024*1024) {
+        alert(`File size should not be more than ${import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB`);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const formData = new FormData();
       formData.append('file', e.dataTransfer.files[0]);
@@ -69,6 +74,12 @@ function UploadComponent(props: any) {
     if (e.target.files && e.target.files[0]) {
       // handleFiles(e.target.files);
       setLoading(true);
+      //check the size of file uploaded and show error if it is more than 2MB
+      if (e.target.files[0].size > import.meta.env.VITE_MAX_FILE_SIZE_IN_MB*1024*1024) {
+        alert(`File size should not be more than ${import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB`);
+        setLoading(false);
+        return;
+      }
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
       const response = await fetch(
@@ -161,8 +172,8 @@ function UploadComponent(props: any) {
                   </Dropdown.Menu>
                 </Dropdown>
                 <div className="m-3">
-                  Free trial version will support only 1st page of the uploaded
-                  file for model training
+                  Free trial version will support only files upto {import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB in size and only 1st page of the uploaded
+                  file for model training.
                 </div>
               </div>
             </label>

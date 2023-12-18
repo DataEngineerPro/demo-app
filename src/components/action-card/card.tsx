@@ -38,9 +38,13 @@ function ActionCard(props: any) {
       headers: new Headers({ 'content-type': 'application/json' }),
       body: body,
     })
-      .then((d) => (d.ok ? d.json() : new Error('expired Session')))
-      .then((d) => {
-        console.log(d);
+      .then(async (res) => {
+        console.log(res);
+        if (!res.ok) {
+          removeRect({ rect: props.rect });
+          return;
+        }
+        const d = await res.json();
         console.log(d.ocr_text);
         updateValues({
           rect: {
@@ -50,6 +54,7 @@ function ActionCard(props: any) {
             text: d.ocr_text,
           },
         });
+
       })
       .catch(() => {
         props.resetSession();
