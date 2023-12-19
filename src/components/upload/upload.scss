@@ -51,7 +51,7 @@
 }
 
 .upload-container {
-  height: calc(100vh - 50px)!important;
+  min-height: calc(100vh - 50px)!important;
   background: linear-gradient(0deg, #cae5ff, #cae5ff),
     linear-gradient(0deg, #ffffff, #ffffff);
 }

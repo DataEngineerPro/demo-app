@@ -5,7 +5,8 @@ import { useCanvasContext } from '../canvas/context/context';
 import { useEffect, useState } from 'react';
 import './card.scss';
 import { CardBody, CardText } from 'react-bootstrap';
-import { X } from 'react-feather';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
+import { string } from 'yup';
 
 function ActionCard(props: any) {
   if (!props || !props.rect) return;
@@ -102,6 +103,11 @@ function ActionCard(props: any) {
     props.close();
   };
   const keyBoardListener = (e: any) => {
+    if(e.target.tagName === 'TEXTAREA'){
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
     if (e.keyCode === 27) props.close();
   };
   useEffect(() => {
@@ -142,14 +148,7 @@ function ActionCard(props: any) {
                 })}
             </Form.Select>
             <Form.Label htmlFor="inputPassword5">Comments</Form.Label>
-            <Form.Control
-              type="text"
-              id="inputPassword5"
-              value={textValue}
-              maxLength={25}
-              onChange={(e) => setTextValue(e.target.value)}
-              disabled={labelValue == 0}
-            />
+            <TextareaAutosize minRows={2} value={textValue} maxLength={25} onChange={(e) => setTextValue(e.target.value)} disabled={labelValue == 0} className='form-control' />
           </Card.Text>
           <Button
             variant={labelValue == 1 ? 'secondary' : 'primary'}

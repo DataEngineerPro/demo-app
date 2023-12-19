@@ -3,6 +3,7 @@ import { useCanvasContext } from '../canvas/context/context';
 import { IRect } from '../canvas/context/contextType';
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 function TableRow(props: any) {
   const x: IRect = props.item;
@@ -101,7 +102,7 @@ function TableRow(props: any) {
             )}
             {edit && (
               <div className="d-flex flex-row justify-content-between w-100 align-items-center">
-                <Form.Control
+                {/* <Form.Control
                   type="text"
                   size="sm"
                   placeholder={ocrValue}
@@ -109,7 +110,18 @@ function TableRow(props: any) {
                   onChange={(e) => setOcrValue(e.target.value)}
                   onKeyDown={handleKeyboard}
                   required
+                  
+                /> */}
+                
+                <TextareaAutosize
+                minRows={3}
+                onChange={(e) => setOcrValue(e.target.value)}
+                onKeyDown={handleKeyboard}
+                value={ocrValue}
+                className='form-control form-control-sm'
+                required
                 />
+                
                 <Save className="icon" size={18} onClick={handleSave}></Save>
               </div>
             )}

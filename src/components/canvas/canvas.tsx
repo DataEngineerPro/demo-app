@@ -113,6 +113,7 @@ function Canvas(props: any) {
 
   const handleRectClick = (e: any, newRect?: IRect) => {
     e.evt.preventDefault();
+    setListening(false)
     divRef.current?.focus();
     if (e.evt.button !== 0) return;
     e.cancelBubble = true;
@@ -137,6 +138,7 @@ function Canvas(props: any) {
 
   const handleRightClick = (e: any) => {
     e.evt.preventDefault();
+    setListening(false)
     if (e.target === Stage) {
       return;
     }
@@ -168,6 +170,7 @@ function Canvas(props: any) {
   };
 
   const handleKeyBoard = (e: any) => {
+    if(!isListening) return;
     e.preventDefault();
     if (e.keyCode === 27 && isListening) {
       setListening(false);
