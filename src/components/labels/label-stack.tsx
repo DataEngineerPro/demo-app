@@ -23,16 +23,25 @@ function LabelStack(props: any) {
     }
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
-    fetch(import.meta.env.VITE_API_PREFIX + '/api/labels', {
+    fetch(import.meta.env.VITE_API_PREFIX + '/api/label/' + props.sessionId, {
       method: 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
       body: JSON.stringify({
-        id: props.sessionId,
-        labels: [{ label: labelText.trim(), colour: '#' + randomColor }],
+        text: labelText.trim(),
+        color: '#' + randomColor,
       }),
-    });
-    addLabel({ label: { text: labelText.trim(), color: '#' + randomColor } });
-    setLabelText('');
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        addLabel({
+          label: {
+            id: Object.keys(data.Attributes.labels)[0],
+            text: labelText.trim(),
+            color: '#' + randomColor,
+          },
+        });
+        setLabelText('');
+      });
   };
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">

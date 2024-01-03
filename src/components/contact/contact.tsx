@@ -252,7 +252,7 @@ function ContactForm(props: any) {
   ];
 
   const handleSubmit = (event: any) => {
-    fetch('/api/form', {
+    fetch('/api/customer', {
       method: 'POST',
       body: JSON.stringify(event),
       headers: new Headers({ 'content-type': 'application/json' }),

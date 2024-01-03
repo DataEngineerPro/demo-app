@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IImage, ILabel, IRect } from './contextType';
+import { IExtraction, IImage, ILabel, IRect } from './contextType';
 
 export enum ActionTypes {
   SET_INITIAL_DATA = 'SET_INITIAL_DATA',
@@ -16,6 +16,7 @@ interface SetInitialDataAction {
   type: ActionTypes.SET_INITIAL_DATA;
   payload: {
     rects: Array<IRect>;
+    extractions: Array<IExtraction>;
     labels: Array<ILabel>;
     document: Array<IImage>;
     page?: number;
@@ -24,32 +25,25 @@ interface SetInitialDataAction {
 
 interface UpdateLabelValueAction {
   type: ActionTypes.UPDATE_LABEL_VALUE;
-  payload: {
-    rect: IRect;
-  };
+  payload: IExtraction;
 }
 
 interface AddRectAction {
   type: ActionTypes.ADD_RECT;
-  payload: {
-    rect: IRect;
-    text: string;
-  };
+  payload: IExtraction;
 }
 
 interface SelectRectAction {
   type: ActionTypes.SELECT_RECT;
   payload: {
-    rect: IRect;
+    extraction: IExtraction;
     isSelected: boolean;
   };
 }
 
 interface RemoveRectAction {
   type: ActionTypes.REMOVE_RECT;
-  payload: {
-    rect: IRect;
-  };
+  payload: IExtraction;
 }
 
 interface AddLabel {

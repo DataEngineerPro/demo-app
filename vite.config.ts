@@ -5,12 +5,11 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   base: '/',
-  
+
   server: {
     proxy: {
       '/api': {
-        target: 'https://lumenai.eucloid.com/api/',
-        // target: 'http://44.211.182.152:8000/api/',
+        target: 'http://localhost:3000/api/',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),

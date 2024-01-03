@@ -1,9 +1,7 @@
 import { Button, Table } from 'react-bootstrap';
 import { useCanvasContext } from '../canvas/context/context';
-import { Settings } from 'react-feather';
 
 import './data-holder.scss';
-import { IRect } from '../canvas/context/contextType';
 import SuccessModal from '../modal/success';
 import { useState } from 'react';
 import TableRow from './row';
@@ -25,10 +23,9 @@ function DataHolder(props: any) {
               </tr>
             </thead>
             <tbody>
-              {data.rects &&
-                data.rects
+              {data.extractions &&
+                data.extractions
                   .filter((x) => x.label !== -1)
-                  .sort((x, y) => x.id - y.id)
                   .map((x: any) => {
                     return (
                       <TableRow

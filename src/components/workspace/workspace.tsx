@@ -15,14 +15,10 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
   const [loading, setLoading] = useState(false);
   const [showBoundingBox, setShowBoundingBox] = useState<number | null>(null);
   const [image, setImage] = useState(images.find((x) => x.page === page));
-  const [maxHeight,setMaxHeight]=useState(0);
+  const [maxHeight, setMaxHeight] = useState(0);
   const fetchData = async (page: number) => {
     const boundingBoxes = await fetch(
-      import.meta.env.VITE_API_PREFIX +
-        '/api/retrive_bbox?id=' +
-        sessionId +
-        '&page_no=' +
-        page
+      import.meta.env.VITE_API_PREFIX + '/api/extractions/' + sessionId
     ).then((data) => data.json());
     if (boundingBoxes.length > 0) {
       const newBoundingBoxes = boundingBoxes.map((x: any, index: number) => {
@@ -34,14 +30,11 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
             height: x.height,
           },
           id: index + 1,
-          label: x.label_name
-            ? data.labels.find((l) => l.text === x.label_name)?.id
-            : 1,
+          label: x.label,
           text: x.ocr_text,
           comment: x.comments,
         };
       });
-      console.log('NEW BOUNDINGBOX ==>', newBoundingBoxes,data.labels);
       updatePage({
         page: page,
         rects: newBoundingBoxes,
@@ -53,29 +46,33 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
       });
     }
     setImage(images.find((x) => x.page === page));
-    document.querySelector('.bodycontainer').scrollTo(0,0)
+    document.querySelector('.bodycontainer').scrollTo(0, 0);
   };
   useEffect(() => {
     setInitialData({
       rects: boundingBoxes,
+      extractions: boundingBoxes,
       labels: labels,
       document: images,
       page: page || 1,
     });
   }, [page, boundingBoxes, labels, images]);
   useEffect(() => {
-    console.log('DATA=>', data);
+    console.log('DATA==>', data);
   }, [data]);
   const pageChange = (newPage: number) => {
     fetchData(newPage);
   };
-  const updateHeight=(h)=>{
+  const updateHeight = (h) => {
     setMaxHeight(h);
-  }
+  };
   return (
     <div className="row bodycontainer">
       <div className="col-1 left-panel m-0 p-0">
-        <ThubmnailSlider height={maxHeight} pageChange={pageChange}></ThubmnailSlider>
+        <ThubmnailSlider
+          height={maxHeight}
+          pageChange={pageChange}
+        ></ThubmnailSlider>
       </div>
 
       <div className="ms-3 col-7 p-0">
@@ -89,7 +86,6 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
             openContextMenu={showBoundingBox}
             closeContextMenu={() => setShowBoundingBox(null)}
             updateHeight={updateHeight}
-            
           ></Canvas>
         )}
         {loading && <LoadingComponent></LoadingComponent>}
@@ -102,22 +98,34 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
           </h6>
           <ul className="ollist">
             <li className="m-0 p-0">
-            Start by creating a new label for each data field or table you wish to extract.
+              Start by creating a new label for each data field or table you
+              wish to extract.
             </li>
             <li className="m-0 p-0">
-            Select the specific data on the page where these fields or tables are located. Take your cursor to the upper left corner of the relevant datapoint, and drag the cursor to select the required portion.
+              Select the specific data on the page where these fields or tables
+              are located. Take your cursor to the upper left corner of the
+              relevant datapoint, and drag the cursor to select the required
+              portion.
             </li>
             <li className=" m-0 p-0">
-            Assign labels to each field or table. Feel free to add any optional comments to specify special processing needs, such as data quality checks or transformations post extraction.
+              Assign labels to each field or table. Feel free to add any
+              optional comments to specify special processing needs, such as
+              data quality checks or transformations post extraction.
             </li>
             <li className="m-0 p-0">
-            After labeling all fields, submit your worksheet. This lets us know exactly what you need, so we can begin tailoring a Machine Learning model just for you.
+              After labeling all fields, submit your worksheet. This lets us
+              know exactly what you need, so we can begin tailoring a Machine
+              Learning model just for you.
             </li>
             <li className=" m-0 p-0">
-            For demo versions, model preparation is swift - generally completed in under 4 hours. Our customer support team will keep you in the loop and inform you the moment your model is ready.
+              For demo versions, model preparation is swift - generally
+              completed in under 4 hours. Our customer support team will keep
+              you in the loop and inform you the moment your model is ready.
             </li>
             <li className=" m-0 p-0">
-            Once your model is trained, it's all set to efficiently process bulk quantities of similar documents. Efficient, effective, and tailored just for you!
+              Once your model is trained, it's all set to efficiently process
+              bulk quantities of similar documents. Efficient, effective, and
+              tailored just for you!
             </li>
           </ul>
         </div>

@@ -43,8 +43,15 @@ function UploadComponent(props: any) {
         alert('Only single image file is supported');
         return;
       }
-      if (e.dataTransfer.files[0].size > import.meta.env.VITE_MAX_FILE_SIZE_IN_MB*1024*1024) {
-        alert(`File size should not be more than ${import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB`);
+      if (
+        e.dataTransfer.files[0].size >
+        import.meta.env.VITE_MAX_FILE_SIZE_IN_MB * 1024 * 1024
+      ) {
+        alert(
+          `File size should not be more than ${
+            import.meta.env.VITE_MAX_FILE_SIZE_IN_MB
+          }MB`
+        );
         setLoading(false);
         return;
       }
@@ -52,7 +59,7 @@ function UploadComponent(props: any) {
       const formData = new FormData();
       formData.append('file', e.dataTransfer.files[0]);
       const response = await fetch(
-        import.meta.env.VITE_API_PREFIX + '/api/upload',
+        import.meta.env.VITE_API_PREFIX + '/api/documents/' + session_id,
         {
           method: 'POST',
           body: formData,
@@ -75,15 +82,22 @@ function UploadComponent(props: any) {
       // handleFiles(e.target.files);
       setLoading(true);
       //check the size of file uploaded and show error if it is more than 2MB
-      if (e.target.files[0].size > import.meta.env.VITE_MAX_FILE_SIZE_IN_MB*1024*1024) {
-        alert(`File size should not be more than ${import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB`);
+      if (
+        e.target.files[0].size >
+        import.meta.env.VITE_MAX_FILE_SIZE_IN_MB * 1024 * 1024
+      ) {
+        alert(
+          `File size should not be more than ${
+            import.meta.env.VITE_MAX_FILE_SIZE_IN_MB
+          }MB`
+        );
         setLoading(false);
         return;
       }
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
       const response = await fetch(
-        import.meta.env.VITE_API_PREFIX + '/api/upload?id=' + session_id,
+        import.meta.env.VITE_API_PREFIX + '/api/documents/' + session_id,
         {
           method: 'POST',
           body: formData,
@@ -91,7 +105,7 @@ function UploadComponent(props: any) {
       );
       if (response.ok) {
         const resp = await response.json();
-        props.uploadComplete(resp[0].id);
+        props.uploadComplete(resp.Attributes.id);
       } else {
         setLoading(false);
         alert('Problem occured with upload, please try again');
@@ -106,8 +120,6 @@ function UploadComponent(props: any) {
 
   const formSubmit = (e) => {
     e.preventDefault();
-    // console.log(import.meta.env.API_PREFIX);
-    //fetch(import.meta.env.API_PREFIX)
   };
 
   const formsubmit = (id: string) => {
@@ -172,8 +184,9 @@ function UploadComponent(props: any) {
                   </Dropdown.Menu>
                 </Dropdown>
                 <div className="m-3">
-                  Free trial version will support only files upto {import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB in size and only 1st page of the uploaded
-                  file for model training.
+                  Free trial version will support only files upto{' '}
+                  {import.meta.env.VITE_MAX_FILE_SIZE_IN_MB}MB in size and only
+                  1st page of the uploaded file for model training.
                 </div>
               </div>
             </label>

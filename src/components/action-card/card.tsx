@@ -6,56 +6,52 @@ import { useEffect, useState } from 'react';
 import './card.scss';
 import { CardBody, CardText } from 'react-bootstrap';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
-import { string } from 'yup';
 
 function ActionCard(props: any) {
-  if (!props || !props.rect) return;
-  console.log(props);
+  console.log('Card props', props);
+  if (!props) return;
   const { data, updateValues } = useCanvasContext();
   const { removeRect } = useCanvasContext();
   const [textValue, setTextValue] = useState<string>(
-    props?.rect?.comment || ''
+    props.extraction.comments || ''
   );
-  const [predictedValue] = useState(props?.rect?.text || '');
-  const [labelValue, setLabelValue] = useState(props.rect?.label);
-  console.log('CARD==>', data.labels);
-  const callApi = async (newRect, label, comment) => {
+  const [predictedValue] = useState(
+    props.extraction.userText || props.extraction.extractedText || ''
+  );
+  const [labelValue, setLabelValue] = useState(props.extraction.label);
+  const callApi = async (newRect: any, label: string, comment: string) => {
+    const itemId = newRect.id.indexOf('temp') === -1 ? newRect.id : null;
     const body = JSON.stringify({
-      id: props.sessionId,
-      coordinates: [
-        {
-          page_no: data.page,
-          left: newRect.x,
-          top: newRect.y,
-          width: newRect.width,
-          height: newRect.height,
-          label_name: data.labels.filter((x) => x.id == label)[0].text,
-          comments: comment,
-        },
-      ],
+      document: data.document?.filter((x) => x.page === data.page)[0].url,
+      left: newRect.left,
+      top: newRect.top,
+      width: newRect.width,
+      height: newRect.height,
+      label: label,
+      comments: comment,
     });
-    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
-      method: 'POST',
+    const url = `${import.meta.env.VITE_API_PREFIX}/api/extractions/${
+      props.sessionId
+    }${itemId ? '/' + itemId : ''}`;
+    await fetch(url, {
+      method: itemId ? 'PUT' : 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
       body: body,
     })
       .then(async (res) => {
-        console.log(res);
         if (!res.ok) {
-          removeRect({ rect: props.rect });
+          removeRect(newRect);
           return;
         }
         const d = await res.json();
-        console.log(d.ocr_text);
+        if (!newRect.id) newRect.id = Object.keys(d.Attributes.extractions)[0];
+        console.log('Extraction', d);
         updateValues({
-          rect: {
-            ...props.rect,
-            comment: textValue.trim(),
-            label: parseInt(labelValue, 10),
-            text: d.ocr_text,
-          },
+          ...props.extraction,
+          ...d.Attributes.extractions[newRect.id],
+          comments: textValue.trim(),
+          label: labelValue,
         });
-
       })
       .catch(() => {
         props.resetSession();
@@ -63,37 +59,27 @@ function ActionCard(props: any) {
   };
   const update = async () => {
     updateValues({
-      rect: {
-        ...props.rect,
-        comment: textValue.trim(),
-        label: parseInt(labelValue, 10),
-        text: predictedValue || 'Updating...',
-      },
+      ...props.extraction,
+      comments: textValue.trim(),
+      label: labelValue,
+      text: predictedValue || 'Updating...',
     });
     props.close();
-    callApi(props.rect.rect, labelValue, textValue.trim());
+    callApi(props.extraction, labelValue, textValue.trim());
   };
   const deleteRect = () => {
-    const body = {
-      id: props.sessionId,
-      coordinates: [
-        {
-          page_no: data.page,
-          left: props.rect.rect.x,
-          top: props.rect.rect.y,
-          width: props.rect.rect.width,
-          height: props.rect.rect.height,
-          label_name: '',
-          comments: '',
-        },
-      ],
-    };
-    fetch(import.meta.env.VITE_API_PREFIX + '/api/delete_bbox', {
-      method: 'DELETE',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      body: JSON.stringify(body),
-    });
-    removeRect({ rect: props.rect });
+    fetch(
+      import.meta.env.VITE_API_PREFIX +
+        '/api/extractions/' +
+        props.sessionId +
+        '/' +
+        props.extraction.id,
+      {
+        method: 'DELETE',
+        headers: new Headers({ 'content-type': 'application/json' }),
+      }
+    );
+    removeRect(props.extraction);
     props.close();
   };
   const labelChange = (e: any) => {
@@ -103,7 +89,7 @@ function ActionCard(props: any) {
     props.close();
   };
   const keyBoardListener = (e: any) => {
-    if(e.target.tagName === 'TEXTAREA'){
+    if (e.target.tagName === 'TEXTAREA') {
       return;
     }
     e.preventDefault();
@@ -126,7 +112,7 @@ function ActionCard(props: any) {
 
   return (
     <Card style={{ width: '18rem' }} onClick={stop}>
-      {props.rect.label > -1 && (
+      {typeof props.extraction.label === 'string' && (
         <Card.Body>
           <Card.Text>
             <Form.Label htmlFor="select">Label</Form.Label>
@@ -148,7 +134,14 @@ function ActionCard(props: any) {
                 })}
             </Form.Select>
             <Form.Label htmlFor="inputPassword5">Comments</Form.Label>
-            <TextareaAutosize minRows={2} value={textValue} maxLength={25} onChange={(e) => setTextValue(e.target.value)} disabled={labelValue == 0} className='form-control' />
+            <TextareaAutosize
+              minRows={2}
+              value={textValue}
+              maxLength={25}
+              onChange={(e) => setTextValue(e.target.value)}
+              disabled={labelValue == 0}
+              className="form-control"
+            />
           </Card.Text>
           <Button
             variant={labelValue == 1 ? 'secondary' : 'primary'}
@@ -163,7 +156,7 @@ function ActionCard(props: any) {
           </Button>
         </Card.Body>
       )}
-      {props.rect.label === -1 && (
+      {props.extraction.label === -1 && (
         <CardBody>
           <CardText>
             This text has been redacted. No operations can be performed on this
