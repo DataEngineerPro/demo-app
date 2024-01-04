@@ -11,8 +11,8 @@ function ThumbnailSliderComponent({ height, pageChange, page }) {
       document.querySelector(`#thumb-page-${data.page}`)?.offsetTop - 250;
 
     console.log('Top==>', top);
-
-    document.querySelector('.slider-container').scrollTop = top;
+    if (document.querySelector('.slider-container'))
+      document.querySelector('.slider-container').scrollTop = top;
   }, [data]);
 
   return (

@@ -45,7 +45,7 @@ function DataHolder(props: any) {
               </Button>
             )}
           <SuccessModal
-            onSuccess={props.showUpload}
+            sessionId={props.sessionId}
             show={showModal}
             onHide={() => setShowModal(false)}
           />
