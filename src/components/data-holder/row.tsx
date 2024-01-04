@@ -8,7 +8,9 @@ function TableRow(props: any) {
   const x: IExtraction = props.item;
 
   const [edit, setEdit] = useState(false);
-  const [ocrValue, setOcrValue] = useState(x.userText || x.extractedText);
+  const [ocrValue, setOcrValue] = useState(
+    x?.id.indexOf('temp') > -1 ? 'updating...' : x.userText || x.extractedText
+  );
   const { data, updateValues } = useCanvasContext();
 
   const openSettings = (item: IExtraction) => {
@@ -73,11 +75,11 @@ function TableRow(props: any) {
       <td
         style={{
           backgroundColor:
-            data?.labels?.find((l) => x.label === l.id)?.color + '19',
+            data?.labels?.find((l) => x.label == l.id)?.color + '19',
           whiteSpace: 'nowrap',
         }}
       >
-        {data?.labels?.find((l) => x.label === l.id)?.text}
+        {data?.labels?.find((l) => x.label == l.id)?.text}
       </td>
       <td>
         <div className="text-container">
@@ -85,11 +87,13 @@ function TableRow(props: any) {
             {!edit && (
               <div className="d-flex flex-row justify-content-between w-100">
                 {ocrValue}
-                <Edit
-                  className="icon"
-                  size={16}
-                  onClick={() => enableEdit(ocrValue)}
-                ></Edit>
+                {x.id.indexOf('temp') === -1 && (
+                  <Edit
+                    className="icon"
+                    size={16}
+                    onClick={() => enableEdit(ocrValue)}
+                  ></Edit>
+                )}
               </div>
             )}
             {edit && (
@@ -123,9 +127,11 @@ function TableRow(props: any) {
       <td>
         <div className="text-container">
           <div>{x.comments}</div>
-          <small className="pointer" onClick={() => openSettings(x)}>
-            <Settings className="icon" />
-          </small>
+          {x.id.indexOf('temp') === -1 && (
+            <small className="pointer" onClick={() => openSettings(x)}>
+              <Settings className="icon" />
+            </small>
+          )}
         </div>
       </td>
     </tr>

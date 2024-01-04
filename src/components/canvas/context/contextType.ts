@@ -34,6 +34,7 @@ export interface IExtraction {
   id: string;
   isSelected?: boolean;
   label: string;
+  tempId?: string;
 }
 
 export interface ICanvasStateType {

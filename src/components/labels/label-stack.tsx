@@ -55,14 +55,14 @@ function LabelStack(props: any) {
               style={{ backgroundColor: x.color + '4D' }}
             >
               {x.text}{' '}
-              <Badge
+              {/* <Badge
                 bg="none"
                 pill
                 style={{ backgroundColor: '#000', color: '#fff' }}
               >
                 {data.rects &&
                   data.rects.filter((r) => r.label === x.id).length}
-              </Badge>
+              </Badge> */}
             </Button>
           );
         })}

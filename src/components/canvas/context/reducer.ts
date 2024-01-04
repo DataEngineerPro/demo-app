@@ -27,7 +27,9 @@ const updateValues = (state: ICanvasStateType, payload: IExtraction) => {
   return {
     ...state,
     extractions: state.extractions.map((item) =>
-      item.id === payload.id ? { ...item, ...payload } : item
+      item.id === payload.id || item.id === payload.tempId
+        ? { ...item, ...payload }
+        : item
     ),
   };
 };
@@ -65,10 +67,12 @@ const selectRect = (
 };
 
 const removeRect = (state: ICanvasStateType, payload: IExtraction) => {
-  const newRects = state.extractions.filter((item) => item.id !== payload.id);
+  const extractions = state.extractions.filter(
+    (item) => item.id !== payload.id
+  );
   return {
     ...state,
-    rects: newRects,
+    extractions: extractions,
   };
 };
 
@@ -78,14 +82,7 @@ const addLabel = (
 ) => {
   return {
     ...state,
-    labels: [
-      ...state.labels,
-      {
-        id: state.labels.length + 1,
-        color: payload.label.color,
-        text: payload.label.text,
-      },
-    ],
+    labels: [...state.labels, payload.label],
   };
 };
 

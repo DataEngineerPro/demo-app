@@ -44,7 +44,10 @@ function ActionCard(props: any) {
           return;
         }
         const d = await res.json();
-        if (!newRect.id) newRect.id = Object.keys(d.Attributes.extractions)[0];
+        if (newRect.id.indexOf('temp') > -1) {
+          newRect.tempId = '' + newRect.id;
+          newRect.id = Object.keys(d.Attributes.extractions)[0];
+        }
         console.log('Extraction', d);
         updateValues({
           ...props.extraction,
@@ -78,9 +81,10 @@ function ActionCard(props: any) {
         method: 'DELETE',
         headers: new Headers({ 'content-type': 'application/json' }),
       }
-    );
-    removeRect(props.extraction);
-    props.close();
+    ).then(() => {
+      removeRect(props.extraction);
+      props.close();
+    });
   };
   const labelChange = (e: any) => {
     setLabelValue(e.target.value);
@@ -126,9 +130,16 @@ function ActionCard(props: any) {
               {data.labels
                 .filter((x) => x.id !== 0)
                 .map((x) => {
+                  const isDisabled =
+                    data.extractions.findIndex((e) => e.label === x.id) > -1;
                   return (
-                    <option key={x.text} value={x.id} disabled={x.id == 1}>
+                    <option
+                      key={x.text}
+                      value={x.id}
+                      disabled={x.id == 1 || isDisabled}
+                    >
                       {x.text}
+                      {isDisabled && ' (Used)'}
                     </option>
                   );
                 })}

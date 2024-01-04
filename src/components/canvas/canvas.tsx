@@ -242,13 +242,14 @@ function Canvas(props: any) {
                       dash={[2, 2]}
                     />
                   )}
-                  {data.rects &&
-                    data.rects.map((x: any) => {
+                  {data.extractions &&
+                    data.extractions.map((x: any) => {
                       console.log(
                         x.left * aspectWidth,
                         x.top * aspectHeight,
                         x.width * aspectWidth,
-                        x.height * aspectHeight
+                        x.height * aspectHeight,
+                        x.id
                       );
                       return (
                         <Rect
@@ -257,15 +258,13 @@ function Canvas(props: any) {
                           y={x.top * aspectHeight}
                           width={x.width * aspectWidth}
                           height={x.height * aspectHeight}
-                          fill={
-                            data.labels.find((l) => x.label === l.id)?.color
-                          }
+                          fill={data.labels.find((l) => x.label == l.id)?.color}
                           opacity={x.label === -1 ? 1 : 0.1}
                           fillEnabled={true}
                           shadowBlur={2}
                           dash={[2, 2]}
                           stroke={
-                            data.labels.find((l) => x.label === l.id)?.color
+                            data.labels.find((l) => x.label == l.id)?.color
                           }
                           dashEnabled={x.isSelected}
                           id={x.id}
