@@ -12,7 +12,6 @@ function DataHolder(props: any) {
   return (
     <>
       {
-        // data.rects && data.rects.filter((x) => x.label !== -1).length > 0 && (
         <>
           <Table striped bordered hover>
             <thead>
@@ -38,8 +37,8 @@ function DataHolder(props: any) {
                   })}
             </tbody>
           </Table>
-          {data.rects &&
-            data.rects.filter((x) => x.label !== -1).length > 0 && (
+          {data.extractions &&
+            data.extractions.filter((x) => x.label !== -1).length > 0 && (
               <Button variant="success" onClick={() => setShowModal(true)}>
                 Submit for Model Training
               </Button>
@@ -51,11 +50,6 @@ function DataHolder(props: any) {
           />
         </>
       }
-      {/* {data.rects && data.rects.filter((x) => x.label !== -1).length === 0 && (
-        <div className="message small">
-          Please start identifying labels by drawing over the document.
-        </div>
-      )} */}
     </>
   );
 }

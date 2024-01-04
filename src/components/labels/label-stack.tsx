@@ -46,11 +46,11 @@ function LabelStack(props: any) {
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       {data.labels
-        .filter((x) => x.id !== -1 && x.id !== 0 && x.id !== 1)
+        .filter((x) => x.id != -1 && x.id != 0 && x.id != 1)
         .map((x) => {
           return (
             <Button
-              key={x.text}
+              key={x.id}
               variant="outline-dark"
               style={{ backgroundColor: x.color + '4D' }}
             >
@@ -60,8 +60,8 @@ function LabelStack(props: any) {
                 pill
                 style={{ backgroundColor: '#000', color: '#fff' }}
               >
-                {data.rects &&
-                  data.rects.filter((r) => r.label === x.id).length}
+                {data.extracions &&
+                  data.extractions.filter((r) => r.label === x.id).length}
               </Badge> */}
             </Button>
           );

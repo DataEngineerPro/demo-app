@@ -160,7 +160,10 @@ function UploadComponent(props: any) {
             >
               <div>
                 <h4>Start by uploading a file</h4>
-                <p>Supported file formats : png, jpg, jpeg and pdf</p>
+                <p>
+                  Supported file formats : png, jpg, jpeg and pdf(first 25
+                  pages)
+                </p>
                 {/* <p>to create a project for optimal result.</p>
               
               */}

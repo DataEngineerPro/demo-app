@@ -20,37 +20,31 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
     const boundingBoxes = await fetch(
       import.meta.env.VITE_API_PREFIX + '/api/extractions/' + sessionId
     ).then((data) => data.json());
-    if (boundingBoxes.length > 0) {
-      const newBoundingBoxes = boundingBoxes.map((x: any, index: number) => {
-        return {
-          rect: {
-            x: x.left,
-            y: x.top,
-            width: x.width,
-            height: x.height,
-          },
-          id: index + 1,
-          label: x.label,
-          text: x.ocr_text,
-          comment: x.comments,
-        };
-      });
-      updatePage({
-        page: page,
-        rects: newBoundingBoxes,
-      });
-    } else {
-      updatePage({
-        page: page,
-        rects: [],
-      });
-    }
+    // if (boundingBoxes.length > 0) {
+    //   const newBoundingBoxes = boundingBoxes.map((x: any, index: number) => {
+    //     return {
+    //       rect: {
+    //         x: x.left,
+    //         y: x.top,
+    //         width: x.width,
+    //         height: x.height,
+    //       },
+    //       id: index + 1,
+    //       label: x.label,
+    //       text: x.ocr_text,
+    //       comment: x.comments,
+    //     };
+    //   });
+    //   updatePage(page);
+    // } else {
+    //   updatePage(page);
+    // }
+    updatePage(page);
     setImage(images.find((x) => x.page === page));
     document.querySelector('.bodycontainer').scrollTo(0, 0);
   };
   useEffect(() => {
     setInitialData({
-      rects: boundingBoxes,
       extractions: boundingBoxes,
       labels: labels,
       document: images,
@@ -79,7 +73,7 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
         {!loading && (
           <Canvas
             labels={labels}
-            rects={boundingBoxes}
+            extracions={boundingBoxes}
             document={image}
             showUpload={false}
             id={sessionId}

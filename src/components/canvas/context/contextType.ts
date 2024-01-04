@@ -17,7 +17,7 @@ export interface IRect {
   rect: { x: number; y: number; width: number; height: number };
   text?: string;
   label?: number;
-  id?: number;
+  id?: string;
   isSelected?: boolean;
   comment?: string;
 }
@@ -66,11 +66,11 @@ export interface IRecord {
 export interface CanvasContextReturnType {
   data: ICanvasStateType;
   setInitialData: (args: {
-    rects: Array<IRect>;
     extractions: Array<IExtraction>;
     labels: Array<ILabel>;
     document: IImage;
-    page?: number;
+    page: number;
+    selectedDocument?: string;
   }) => void;
   updateValues: (args: IExtraction) => void;
   addRect: (args: IExtraction) => void;

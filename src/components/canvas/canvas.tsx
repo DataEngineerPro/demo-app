@@ -45,6 +45,7 @@ function Canvas(props: any) {
       setListenToStateChange(false);
       showContextMenu(data.extractions[data.extractions.length - 1].id);
     }
+    console.log('Data=>', data);
   }, [data]);
   useEffect(() => {
     divRef.current?.scrollTo(0, 0);
@@ -242,8 +243,8 @@ function Canvas(props: any) {
                       dash={[2, 2]}
                     />
                   )}
-                  {data.extractions &&
-                    data.extractions.map((x: any) => {
+                  {data.rects &&
+                    data.rects.map((x: any) => {
                       console.log(
                         x.left * aspectWidth,
                         x.top * aspectHeight,

@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Action, ActionTypes } from './actions';
-import { ICanvasStateType, IExtraction, ILabel, IRect } from './contextType';
+import { ICanvasStateType, IExtraction, IImage, ILabel } from './contextType';
 
 const setInitialData = (
   state: ICanvasStateType,
   payload: {
-    rects: IRect[];
     extractions: IExtraction[];
     labels: ILabel[];
-    document: any;
-    page?: number;
+    document: IImage[];
+    page: any;
   }
 ) => {
   return {
     ...state,
-    rects: payload.rects,
     extractions: payload.extractions,
     labels: payload.labels,
     document: payload.document,
-    nextRectId: payload.rects.length + 1,
     page: payload.page || 1,
+    rects: payload.extractions.filter(
+      (x) => x.document === payload.document[payload.page - 1].url
+    ),
   };
 };
 
@@ -46,6 +46,7 @@ const addRect = (state: ICanvasStateType, payload: IExtraction) => {
   return {
     ...state,
     extractions: [...(state.extractions || []), payload],
+    rects: [...(state.rects || []), payload],
   };
 };
 
@@ -70,9 +71,11 @@ const removeRect = (state: ICanvasStateType, payload: IExtraction) => {
   const extractions = state.extractions.filter(
     (item) => item.id !== payload.id
   );
+  const rects = state.rects.filter((item) => item.id !== payload.id);
   return {
     ...state,
     extractions: extractions,
+    rects: rects,
   };
 };
 
@@ -86,15 +89,14 @@ const addLabel = (
   };
 };
 
-const updatePage = (
-  state: ICanvasStateType,
-  payload: { page: number; rects: IRect[] }
-) => {
+const updatePage = (state: ICanvasStateType, payload: number) => {
   return {
     ...state,
-    page: payload.page,
-    rects: payload.rects,
-    nextRectId: payload.rects.length + 1,
+    page: payload,
+    rects: state.extractions.filter(
+      (item) =>
+        item.document === state.document?.find((x) => x.page == payload)?.url
+    ),
   };
 };
 

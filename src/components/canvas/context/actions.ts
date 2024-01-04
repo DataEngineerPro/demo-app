@@ -15,11 +15,10 @@ export enum ActionTypes {
 interface SetInitialDataAction {
   type: ActionTypes.SET_INITIAL_DATA;
   payload: {
-    rects: Array<IRect>;
     extractions: Array<IExtraction>;
     labels: Array<ILabel>;
     document: Array<IImage>;
-    page?: number;
+    page: number;
   };
 }
 
@@ -55,10 +54,7 @@ interface AddLabel {
 
 interface UpdatePage {
   type: ActionTypes.UPDATE_PAGE;
-  payload: {
-    page: number;
-    rects: Array<IRect>;
-  };
+  payload: number;
 }
 
 export type Action =

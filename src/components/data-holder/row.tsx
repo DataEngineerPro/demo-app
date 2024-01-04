@@ -1,4 +1,4 @@
-import { Edit, Save, Settings } from 'react-feather';
+import { Edit, Save, XCircle, Settings } from 'react-feather';
 import { useCanvasContext } from '../canvas/context/context';
 import { IExtraction, IRect } from '../canvas/context/contextType';
 import { useState } from 'react';
@@ -88,11 +88,12 @@ function TableRow(props: any) {
               <div className="d-flex flex-row justify-content-between w-100">
                 {ocrValue}
                 {x.id.indexOf('temp') === -1 && (
-                  <Edit
-                    className="icon"
-                    size={16}
+                  <small
+                    className="pointer"
                     onClick={() => enableEdit(ocrValue)}
-                  ></Edit>
+                  >
+                    <Edit className="icon" size={16}></Edit>
+                  </small>
                 )}
               </div>
             )}
@@ -117,8 +118,20 @@ function TableRow(props: any) {
                   className="form-control form-control-sm"
                   required
                 />
-
-                <Save className="icon" size={18} onClick={handleSave}></Save>
+                <div>
+                  <small className="pointer" onClick={handleSave}>
+                    <Save className="icon" size={18}></Save>
+                  </small>
+                  <small
+                    className="pointer"
+                    onClick={() => {
+                      setOcrValue(x.userText || x.extractedText);
+                      setEdit(false);
+                    }}
+                  >
+                    <XCircle className="icon" size={18}></XCircle>
+                  </small>
+                </div>
               </div>
             )}
           </div>

@@ -23,24 +23,22 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
   children,
 }) => {
   const [data, dispatch] = useReducer(reducer, {
-    rects: [],
+    extractions: [],
     labels: [],
     document: null,
-    page: 0,
+    page: 1,
   });
 
   const setInitialData = useCallback(
     (args: {
-      rects: Array<IRect>;
       extractions: Array<IExtraction>;
       labels: Array<any>;
       document: any;
-      page?: number;
+      page: number;
     }) => {
       dispatch({
         type: ActionTypes.SET_INITIAL_DATA,
         payload: {
-          rects: args.rects,
           extractions: args.extractions,
           labels: args.labels,
           document: args.document,
@@ -94,13 +92,10 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     });
   }, []);
 
-  const updatePage = useCallback((args: { page: number; rects: IRect[] }) => {
+  const updatePage = useCallback((args: number) => {
     dispatch({
       type: ActionTypes.UPDATE_PAGE,
-      payload: {
-        page: args.page,
-        rects: args.rects,
-      },
+      payload: args,
     });
   }, []);
 
