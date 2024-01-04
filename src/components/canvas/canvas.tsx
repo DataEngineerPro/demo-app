@@ -15,7 +15,8 @@ function Canvas(props: any) {
   const [divHeight, setDivHeight] = useState<number>(0);
   const [aspectWidth, setAspectWidth] = useState(1);
   const [aspectHeight, setAspectHeight] = useState(1);
-  const { data, addRect, selectRect, removeRect } = useCanvasContext();
+  const { data, addRect, selectRect, removeRect, updatePage } =
+    useCanvasContext();
 
   useEffect(() => {
     if (!divRef.current || !props.document?.width || !props.document.height)

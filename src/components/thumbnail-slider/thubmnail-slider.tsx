@@ -1,12 +1,19 @@
-import Slider from 'react-slick';
+import { useEffect } from 'react';
 import { useCanvasContext } from '../canvas/context/context';
-import { ChevronDown, ChevronUp } from 'react-feather';
 import './thumbnail-slider.scss';
-import { Button, Col, Form, Row } from 'react-bootstrap';
-import { useRef } from 'react';
 
-function ThumbnailSliderComponent({ height, pageChange }) {
+function ThumbnailSliderComponent({ height, pageChange, page }) {
+  console.log('Page==>', page);
   const { data } = useCanvasContext();
+
+  useEffect(() => {
+    const top =
+      document.querySelector(`#thumb-page-${data.page}`)?.offsetTop - 250;
+
+    console.log('Top==>', top);
+
+    document.querySelector('.slider-container').scrollTop = top;
+  }, [data]);
 
   return (
     <>
@@ -31,6 +38,7 @@ function ThumbnailSliderComponent({ height, pageChange }) {
               {data.document?.map((x) => {
                 return (
                   <div
+                    id={`thumb-page-${x.page}`}
                     key={x.page}
                     onClick={() => pageChange(x.page)}
                     className={`d-flex align-items-center justify-content-center flex-column rounded mx-auto my-2 pointer ${

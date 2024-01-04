@@ -14,6 +14,9 @@ function TableRow(props: any) {
   const { data, updateValues } = useCanvasContext();
 
   const openSettings = (item: IExtraction) => {
+    const pageId = data.document?.find((x) => x.url === item.document)?.page;
+    console.log('Page==>', pageId);
+    props.pageChange(pageId);
     props.showContextMenu(item.id);
   };
   const handleKeyboard = (e) => {

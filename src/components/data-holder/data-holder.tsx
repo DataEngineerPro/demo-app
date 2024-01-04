@@ -32,6 +32,7 @@ function DataHolder(props: any) {
                         item={x}
                         showContextMenu={props.showContextMenu}
                         key={x.id}
+                        pageChange={props.pageChange}
                       ></TableRow>
                     );
                   })}

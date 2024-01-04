@@ -224,7 +224,6 @@ function App() {
             sessionId={sessionStorage.getItem(lumenSessionId)}
             boundingBoxes={boundingBoxes}
             images={document}
-            page={1}
           ></Workspace>
         )}
       </Container>

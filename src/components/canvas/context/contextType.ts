@@ -76,4 +76,5 @@ export interface CanvasContextReturnType {
   addRect: (args: IExtraction) => void;
   selectRect: (args: { extraction: IExtraction; isSelected: boolean }) => void;
   removeRect: (args: IExtraction) => void;
+  updatePage: (args: number) => void;
 }

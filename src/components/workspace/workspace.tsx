@@ -10,39 +10,13 @@ import DataHolder from '../data-holder/data-holder';
 import LoadingComponent from '../loading/loading';
 import './workspace.scss';
 
-function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
+function Workspace({ boundingBoxes, labels, images, sessionId }) {
   const { data, setInitialData, updatePage } = useCanvasContext();
   const [loading, setLoading] = useState(false);
   const [showBoundingBox, setShowBoundingBox] = useState<number | null>(null);
-  const [image, setImage] = useState(images.find((x) => x.page === page));
   const [maxHeight, setMaxHeight] = useState(0);
-  const fetchData = async (page: number) => {
-    const boundingBoxes = await fetch(
-      import.meta.env.VITE_API_PREFIX + '/api/extractions/' + sessionId
-    ).then((data) => data.json());
-    // if (boundingBoxes.length > 0) {
-    //   const newBoundingBoxes = boundingBoxes.map((x: any, index: number) => {
-    //     return {
-    //       rect: {
-    //         x: x.left,
-    //         y: x.top,
-    //         width: x.width,
-    //         height: x.height,
-    //       },
-    //       id: index + 1,
-    //       label: x.label,
-    //       text: x.ocr_text,
-    //       comment: x.comments,
-    //     };
-    //   });
-    //   updatePage(page);
-    // } else {
-    //   updatePage(page);
-    // }
-    updatePage(page);
-    setImage(images.find((x) => x.page === page));
-    document.querySelector('.bodycontainer').scrollTo(0, 0);
-  };
+  const [page, setPage] = useState(1);
+  const [image, setImage] = useState(images.find((x) => x.page === page));
   useEffect(() => {
     setInitialData({
       extractions: boundingBoxes,
@@ -53,9 +27,12 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
   }, [page, boundingBoxes, labels, images]);
   useEffect(() => {
     console.log('DATA==>', data);
+    setPage(data.page);
   }, [data]);
   const pageChange = (newPage: number) => {
-    fetchData(newPage);
+    updatePage(newPage);
+    setImage(images.find((x) => x.page === newPage));
+    document.querySelector('.bodycontainer').scrollTo(0, 0);
   };
   const updateHeight = (h) => {
     setMaxHeight(h);
@@ -137,6 +114,8 @@ function Workspace({ page, boundingBoxes, labels, images, sessionId }) {
             showUpload={false}
             showContextMenu={setShowBoundingBox}
             sessionId={sessionId}
+            pageChange={pageChange}
+            page={page}
           />
         </div>
       </div>
