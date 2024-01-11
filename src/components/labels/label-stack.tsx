@@ -74,6 +74,7 @@ function LabelStack(props: any) {
           value={labelText}
           onChange={(e) => setLabelText(e.target.value)}
           onKeyDown={handleKeyBoard}
+          className="label-input"
         />
         <Button variant="primary" id="button-addon2" onClick={labelAdd}>
           <PlusCircle size="24px"></PlusCircle>

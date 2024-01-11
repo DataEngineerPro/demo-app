@@ -9,6 +9,7 @@ import LabelStack from '../labels/label-stack';
 import DataHolder from '../data-holder/data-holder';
 import LoadingComponent from '../loading/loading';
 import './workspace.scss';
+import IntroComponent from '../intro/intro';
 
 function Workspace({ boundingBoxes, labels, images, sessionId }) {
   const { data, setInitialData, updatePage } = useCanvasContext();
@@ -39,6 +40,7 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
   };
   return (
     <div className="row bodycontainer">
+      <IntroComponent hintsEnabled={true}></IntroComponent>
       <div className="col-1 left-panel m-0 p-0">
         <ThubmnailSlider
           height={maxHeight}
@@ -63,7 +65,7 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
       </div>
 
       <div className="col ms-3 right-panel bg-light">
-        <div className="d-flex flex-column mb-2">
+        <div className="instructions d-flex flex-column mb-2">
           <h6>
             How to Get Started with Lumen AI Demo Version: Your Easy Guide{' '}
           </h6>

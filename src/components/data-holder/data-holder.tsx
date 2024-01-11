@@ -13,7 +13,7 @@ function DataHolder(props: any) {
     <>
       {
         <>
-          <Table striped bordered hover>
+          <Table className="label-table" striped bordered hover>
             <thead>
               <tr>
                 <th>Label</th>
