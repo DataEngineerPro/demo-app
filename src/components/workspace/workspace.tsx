@@ -18,6 +18,7 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
   const [maxHeight, setMaxHeight] = useState(0);
   const [page, setPage] = useState(1);
   const [image, setImage] = useState(images.find((x) => x.page === page));
+  const [hintsEnabled, setHintsEnabled] = useState(false);
   useEffect(() => {
     setInitialData({
       extractions: boundingBoxes,
@@ -25,9 +26,11 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
       document: images,
       page: page || 1,
     });
-  }, [page, boundingBoxes, labels, images]);
+    setTimeout(() => {
+      setHintsEnabled(true);
+    }, 300);
+  }, []);
   useEffect(() => {
-    console.log('DATA==>', data);
     setPage(data.page);
   }, [data]);
   const pageChange = (newPage: number) => {
@@ -40,7 +43,10 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
   };
   return (
     <div className="row bodycontainer">
-      <IntroComponent hintsEnabled={true}></IntroComponent>
+      <IntroComponent
+        hintsEnabled={hintsEnabled}
+        setHintsEnabled={setHintsEnabled}
+      ></IntroComponent>
       <div className="col-1 left-panel m-0 p-0">
         <ThubmnailSlider
           height={maxHeight}

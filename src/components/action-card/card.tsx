@@ -8,7 +8,6 @@ import { CardBody, CardText } from 'react-bootstrap';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 function ActionCard(props: any) {
-  console.log('Card props', props);
   if (!props) return;
   const { data, updateValues } = useCanvasContext();
   const { removeRect } = useCanvasContext();

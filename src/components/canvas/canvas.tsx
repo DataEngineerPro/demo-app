@@ -46,7 +46,6 @@ function Canvas(props: any) {
       setListenToStateChange(false);
       showContextMenu(data.extractions[data.extractions.length - 1].id);
     }
-    console.log('Data=>', data);
   }, [data]);
   useEffect(() => {
     divRef.current?.scrollTo(0, 0);
@@ -83,7 +82,18 @@ function Canvas(props: any) {
     addNewRect(newRect, '');
   };
   const addNewRect = (rect: any, text: string) => {
-    addRect(rect);
+    if (
+      data.extractions.length === 0 ||
+      data.extractions.filter(
+        (x) => x.document === data.document[data.page - 1].url
+      ).length > 0
+    ) {
+      addRect(rect);
+    } else {
+      alert(
+        'Demo version is limited to extractions for only one page of the document.'
+      );
+    }
     setListenToStateChange(true);
     setTempRect(null);
     setOriginalCords(null);
@@ -246,13 +256,13 @@ function Canvas(props: any) {
                   )}
                   {data.rects &&
                     data.rects.map((x: any) => {
-                      console.log(
-                        x.left * aspectWidth,
-                        x.top * aspectHeight,
-                        x.width * aspectWidth,
-                        x.height * aspectHeight,
-                        x.id
-                      );
+                      // console.log(
+                      //   x.left * aspectWidth,
+                      //   x.top * aspectHeight,
+                      //   x.width * aspectWidth,
+                      //   x.height * aspectHeight,
+                      //   x.id
+                      // );
                       return (
                         <Rect
                           key={x.id}

@@ -4,10 +4,8 @@ import './intro.scss';
 import { Card, ListGroup } from 'react-bootstrap';
 
 function IntroComponent(props: any) {
-  console.log('props', props);
-
   const onExit = () => {
-    console.log('Exit Called');
+    props.setHintsEnabled(false);
   };
   const steps = [
     {
@@ -19,12 +17,11 @@ function IntroComponent(props: any) {
     {
       element: '.selected-thumbnail',
       intro: 'Identify the page where the fields or tables are located',
-      position: 'top',
+      position: 'right',
     },
     {
       intro: CanvasIntroComponent(),
       tooltipClass: 'customTooltip',
-      position: 'top',
     },
     {
       element: '.label-table',
@@ -34,7 +31,7 @@ function IntroComponent(props: any) {
     },
     {
       intro: GeneralInstructions(),
-      position: 'center',
+      tooltipClass: 'customTooltip',
     },
     {
       element: '.instructions',
