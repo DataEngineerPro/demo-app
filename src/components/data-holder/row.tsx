@@ -1,18 +1,22 @@
-import { Edit, Save, Settings } from 'react-feather';
+import { Edit, Save, XCircle, Settings } from 'react-feather';
 import { useCanvasContext } from '../canvas/context/context';
-import { IRect } from '../canvas/context/contextType';
+import { IExtraction, IRect } from '../canvas/context/contextType';
 import { useState } from 'react';
-import { Form } from 'react-bootstrap';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 function TableRow(props: any) {
-  const x: IRect = props.item;
+  const x: IExtraction = props.item;
 
   const [edit, setEdit] = useState(false);
-  const [ocrValue, setOcrValue] = useState(x.text);
+  const [ocrValue, setOcrValue] = useState(
+    x?.id.indexOf('temp') > -1 ? 'updating...' : x.userText || x.extractedText
+  );
   const { data, updateValues } = useCanvasContext();
 
-  const openSettings = (item: IRect) => {
+  const openSettings = (item: IExtraction) => {
+    const pageId = data.document?.find((x) => x.url === item.document)?.page;
+    console.log('Page==>', pageId);
+    props.pageChange(pageId);
     props.showContextMenu(item.id);
   };
   const handleKeyboard = (e) => {
@@ -29,43 +33,36 @@ function TableRow(props: any) {
   };
   const updateRect = async () => {
     if (ocrValue.trim().length === 0) {
-      setOcrValue(x.text);
+      setOcrValue(x.userText || x.extractedText);
       setEdit(false);
     }
     const updatingRect = {
       ...x,
-      text: 'updating',
+      userText: 'updating',
     };
-    updateValues({ rect: updatingRect });
+    updateValues(updatingRect);
     setEdit(false);
     const body = JSON.stringify({
-      id: props.sessionId,
-      coordinates: [
-        {
-          page_no: data.page,
-          left: x.rect.x,
-          top: x.rect.y,
-          width: x.rect.width,
-          height: x.rect.height,
-          label_name: data.labels.find((l) => l.id == x.label)?.text,
-          comments: x.comment,
-          ocr_text: ocrValue.trim(),
-        },
-      ],
+      ...x,
+      userText: ocrValue.trim(),
     });
-    await fetch(import.meta.env.VITE_API_PREFIX + '/api/upload_bbox_info', {
-      method: 'POST',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      body: body,
-    })
+    await fetch(
+      import.meta.env.VITE_API_PREFIX +
+        '/api/extractions/' +
+        props.sessionId +
+        '/' +
+        x.id,
+      {
+        method: 'PUT',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        body: body,
+      }
+    )
       .then((d) => (d.ok ? d.json() : new Error('expired Session')))
-      .then(() => {
-        console.log('updating values');
+      .then((d) => {
         updateValues({
-          rect: {
-            ...x,
-            text: ocrValue.trim(),
-          },
+          ...x,
+          ...d.Attributes.extractions[x.id],
         });
       })
       .catch(() => {
@@ -81,23 +78,26 @@ function TableRow(props: any) {
       <td
         style={{
           backgroundColor:
-            data?.labels?.find((l) => x.label === l.id)?.color + '19',
+            data?.labels?.find((l) => x.label == l.id)?.color + '19',
           whiteSpace: 'nowrap',
         }}
       >
-        {data?.labels?.find((l) => x.label === l.id)?.text}
+        {data?.labels?.find((l) => x.label == l.id)?.text}
       </td>
       <td>
         <div className="text-container">
           <div className="d-flex w-100">
             {!edit && (
               <div className="d-flex flex-row justify-content-between w-100">
-                {x.text}
-                <Edit
-                  className="icon"
-                  size={16}
-                  onClick={() => enableEdit(x.text)}
-                ></Edit>
+                {ocrValue}
+                {x.id.indexOf('temp') === -1 && (
+                  <small
+                    className="pointer"
+                    onClick={() => enableEdit(ocrValue)}
+                  >
+                    <Edit className="icon" size={16}></Edit>
+                  </small>
+                )}
               </div>
             )}
             {edit && (
@@ -112,17 +112,29 @@ function TableRow(props: any) {
                   required
                   
                 /> */}
-                
+
                 <TextareaAutosize
-                minRows={3}
-                onChange={(e) => setOcrValue(e.target.value)}
-                onKeyDown={handleKeyboard}
-                value={ocrValue}
-                className='form-control form-control-sm'
-                required
+                  minRows={3}
+                  onChange={(e) => setOcrValue(e.target.value)}
+                  onKeyDown={handleKeyboard}
+                  value={ocrValue}
+                  className="form-control form-control-sm"
+                  required
                 />
-                
-                <Save className="icon" size={18} onClick={handleSave}></Save>
+                <div>
+                  <small className="pointer" onClick={handleSave}>
+                    <Save className="icon" size={18}></Save>
+                  </small>
+                  <small
+                    className="pointer"
+                    onClick={() => {
+                      setOcrValue(x.userText || x.extractedText);
+                      setEdit(false);
+                    }}
+                  >
+                    <XCircle className="icon" size={18}></XCircle>
+                  </small>
+                </div>
               </div>
             )}
           </div>
@@ -130,10 +142,12 @@ function TableRow(props: any) {
       </td>
       <td>
         <div className="text-container">
-          <div>{x.comment}</div>
-          <small className="pointer" onClick={() => openSettings(x)}>
-            <Settings className="icon" />
-          </small>
+          <div>{x.comments}</div>
+          {x.id.indexOf('temp') === -1 && (
+            <small className="pointer" onClick={() => openSettings(x)}>
+              <Settings className="icon" />
+            </small>
+          )}
         </div>
       </td>
     </tr>

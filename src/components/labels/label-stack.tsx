@@ -23,37 +23,46 @@ function LabelStack(props: any) {
     }
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
-    fetch(import.meta.env.VITE_API_PREFIX + '/api/labels', {
+    fetch(import.meta.env.VITE_API_PREFIX + '/api/label/' + props.sessionId, {
       method: 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
       body: JSON.stringify({
-        id: props.sessionId,
-        labels: [{ label: labelText.trim(), colour: '#' + randomColor }],
+        text: labelText.trim(),
+        color: '#' + randomColor,
       }),
-    });
-    addLabel({ label: { text: labelText.trim(), color: '#' + randomColor } });
-    setLabelText('');
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        addLabel({
+          label: {
+            id: Object.keys(data.Attributes.labels)[0],
+            text: labelText.trim(),
+            color: '#' + randomColor,
+          },
+        });
+        setLabelText('');
+      });
   };
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       {data.labels
-        .filter((x) => x.id !== -1 && x.id !== 0 && x.id !== 1)
+        .filter((x) => x.id != -1 && x.id != 0 && x.id != 1)
         .map((x) => {
           return (
             <Button
-              key={x.text}
+              key={x.id}
               variant="outline-dark"
               style={{ backgroundColor: x.color + '4D' }}
             >
               {x.text}{' '}
-              <Badge
+              {/* <Badge
                 bg="none"
                 pill
                 style={{ backgroundColor: '#000', color: '#fff' }}
               >
-                {data.rects &&
-                  data.rects.filter((r) => r.label === x.id).length}
-              </Badge>
+                {data.extracions &&
+                  data.extractions.filter((r) => r.label === x.id).length}
+              </Badge> */}
             </Button>
           );
         })}
@@ -65,6 +74,7 @@ function LabelStack(props: any) {
           value={labelText}
           onChange={(e) => setLabelText(e.target.value)}
           onKeyDown={handleKeyBoard}
+          className="label-input"
         />
         <Button variant="primary" id="button-addon2" onClick={labelAdd}>
           <PlusCircle size="24px"></PlusCircle>

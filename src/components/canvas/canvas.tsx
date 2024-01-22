@@ -4,54 +4,52 @@ import { Layer, Stage, Rect, Image } from 'react-konva';
 import 'konva/lib/shapes/Rect';
 import useImage from 'use-image';
 import { useCanvasContext } from './context/context';
-import { IRect } from './context/contextType';
+import { IExtraction, IRect } from './context/contextType';
 import ActionCard from '../action-card/card';
 import './canvas.scss';
 
 function Canvas(props: any) {
-  console.log(props);
   const divRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [divWidth, setDivWidth] = useState<number>(0);
   const [divHeight, setDivHeight] = useState<number>(0);
   const [aspectWidth, setAspectWidth] = useState(1);
   const [aspectHeight, setAspectHeight] = useState(1);
-  const { data, addRect, selectRect, removeRect } = useCanvasContext();
+  const { data, addRect, selectRect, removeRect, updatePage } =
+    useCanvasContext();
 
   useEffect(() => {
     if (!divRef.current || !props.document?.width || !props.document.height)
       return;
     const aspectRatio = props.document.height / props.document.width;
     const docWidth = Math.round(divRef.current?.offsetWidth - 2);
-    const docHeight = Math.round((divRef.current?.offsetWidth - 2) * aspectRatio);
+    const docHeight = Math.round(
+      (divRef.current?.offsetWidth - 2) * aspectRatio
+    );
     setDivWidth(docWidth);
     setDivHeight(docHeight);
     props.updateHeight(docHeight);
-    setAspectWidth(
-      docWidth / props.document?.width);
-    setAspectHeight(
-      docHeight / props.document?.height
-    );
+    setAspectWidth(docWidth / props.document?.width);
+    setAspectHeight(docHeight / props.document?.height);
   }, [divRef.current, props.document]);
-  const [image] = useImage(props.document?.url);
-  console.log('IMAGE==>', image, props.document?.url);
+  const [image] = useImage(props.document?.displayUrl);
   const [tempRect, setTempRect] = useState<any>(null);
   const [originalCords, setOriginalCords] = useState<any>(null);
   const [newCords, setNewCords] = useState<any>(null);
   const [isListening, setListening] = useState<boolean>(false);
-  const [selectedRect, setSelectedRect] = useState<IRect | null>(null);
-  const [contextRect, setContextRect] = useState<IRect | null>(null);
+  const [selectedRect, setSelectedRect] = useState<IExtraction | null>(null);
+  const [contextRect, setContextRect] = useState<IExtraction | null>(null);
   const [listenToStateChange, setListenToStateChange] = useState(false);
 
   useEffect(() => {
     if (listenToStateChange) {
       setListenToStateChange(false);
-      showContextMenu(data.rects[data.rects.length - 1].id);
+      showContextMenu(data.extractions[data.extractions.length - 1].id);
     }
   }, [data]);
-  useEffect(()=>{
-    divRef.current?.scrollTo(0,0)
-  },[props.image])
+  useEffect(() => {
+    divRef.current?.scrollTo(0, 0);
+  }, [props.image]);
   useEffect(() => {
     if (!props.openContextMenu) return;
     showContextMenu(props.openContextMenu);
@@ -74,23 +72,28 @@ function Canvas(props: any) {
     setListening(false);
     if (!tempRect) return;
     const newRect = {
-      x: tempRect.x / aspectWidth,
+      left: tempRect.x / aspectWidth,
       width: tempRect.width / aspectWidth,
-      y: tempRect.y / aspectHeight,
+      top: tempRect.y / aspectHeight,
       height: tempRect.height / aspectHeight,
+      label: '1',
+      id: 'temp-' + Math.round(tempRect.x) + Math.round(tempRect.y),
     };
     addNewRect(newRect, '');
-
-    console.log(tempRect, newRect);
   };
   const addNewRect = (rect: any, text: string) => {
-    console.log(rect, text);
-    addRect({
-      rect: {
-        rect: rect,
-      },
-      text: 'text',
-    });
+    if (
+      data.extractions.length === 0 ||
+      data.extractions.filter(
+        (x) => x.document === data.document[data.page - 1].url
+      ).length > 0
+    ) {
+      addRect(rect);
+    } else {
+      alert(
+        'Demo version is limited to extractions for only one page of the document.'
+      );
+    }
     setListenToStateChange(true);
     setTempRect(null);
     setOriginalCords(null);
@@ -111,26 +114,26 @@ function Canvas(props: any) {
     });
   };
 
-  const handleRectClick = (e: any, newRect?: IRect) => {
+  const handleRectClick = (e: any, newRect?: IExtraction) => {
     e.evt.preventDefault();
-    setListening(false)
+    setListening(false);
     divRef.current?.focus();
     if (e.evt.button !== 0) return;
     e.cancelBubble = true;
     if (newRect && !selectedRect) {
       setSelectedRect(newRect);
-      selectRect({ rect: newRect, isSelected: true });
+      selectRect({ extraction: newRect, isSelected: true });
       showContextMenu(newRect.id);
     } else if (newRect && selectedRect && newRect.id !== selectedRect.id) {
-      selectRect({ rect: selectedRect, isSelected: false });
+      selectRect({ extraction: selectedRect, isSelected: false });
       setSelectedRect(newRect);
-      selectRect({ rect: newRect, isSelected: true });
+      selectRect({ extraction: newRect, isSelected: true });
       showContextMenu(newRect.id);
     } else if (!newRect && selectedRect) {
-      selectRect({ rect: selectedRect, isSelected: false });
+      selectRect({ extraction: selectedRect, isSelected: false });
       setSelectedRect(null);
     } else if (newRect && selectedRect && newRect.id === selectedRect.id) {
-      selectRect({ rect: selectedRect, isSelected: true });
+      selectRect({ extraction: selectedRect, isSelected: true });
       setSelectedRect(null);
       showContextMenu(selectedRect.id);
     }
@@ -138,7 +141,7 @@ function Canvas(props: any) {
 
   const handleRightClick = (e: any) => {
     e.evt.preventDefault();
-    setListening(false)
+    setListening(false);
     if (e.target === Stage) {
       return;
     }
@@ -146,31 +149,32 @@ function Canvas(props: any) {
     showContextMenu(e.target.attrs.id);
   };
 
-  const showContextMenu = (id: number) => {
-    const selectedbox = id && data.rects?.find((x) => x.id === id);
-    if (!selectedbox || !selectedbox.rect) return;
+  const showContextMenu = (id: string) => {
+    const selectedbox = id && data.extractions?.find((x) => x.id === id);
+    if (!selectedbox) return;
     setContextRect(null);
     setTimeout(() => {
       setContextRect(selectedbox);
-      console.log("Selected Box=>", selectedbox, aspectHeight, aspectWidth);
       // show menu
       if (menuRef.current && divRef.current) {
         menuRef.current.style.display = 'initial';
-        menuRef.current.style.top =
-          selectedbox?.rect?.y * aspectHeight +
-          4 + 'px';
+        menuRef.current.style.top = selectedbox?.top * aspectHeight + 4 + 'px';
         menuRef.current.style.left =
-          selectedbox?.rect?.x * aspectWidth +
-          selectedbox?.rect?.width * aspectWidth +
+          selectedbox?.left * aspectWidth +
+          selectedbox?.width * aspectWidth +
           4 +
           'px';
       }
-      menuRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      menuRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      });
     }, 300);
   };
 
   const handleKeyBoard = (e: any) => {
-    if(!isListening) return;
+    if (!isListening) return;
     e.preventDefault();
     if (e.keyCode === 27 && isListening) {
       setListening(false);
@@ -181,20 +185,20 @@ function Canvas(props: any) {
         coordinates: [
           {
             page_no: data.page,
-            left: selectedRect.rect.x,
-            top: selectedRect.rect.y,
-            width: selectedRect.rect.width,
-            height: selectedRect.rect.height,
+            left: selectedRect.left,
+            top: selectedRect.top,
+            width: selectedRect.width,
+            height: selectedRect.height,
           },
         ],
       };
-      fetch(import.meta.env.VITE_API_PREFIX + '/api/delete_bbox', {
+      fetch(import.meta.env.VITE_API_PREFIX + '/api/extractions', {
         method: 'DELETE',
         headers: new Headers({ 'content-type': 'application/json' }),
         body: JSON.stringify(body),
       });
 
-      removeRect({ rect: selectedRect });
+      removeRect(selectedRect);
       setSelectedRect(null);
       setContextRect(null);
     }
@@ -202,7 +206,7 @@ function Canvas(props: any) {
 
   const closeContext = () => {
     if (selectedRect) {
-      selectRect({ rect: selectedRect, isSelected: false });
+      selectRect({ extraction: selectedRect, isSelected: false });
       setSelectedRect(null);
     }
     setContextRect(null);
@@ -218,7 +222,7 @@ function Canvas(props: any) {
             onKeyDown={handleKeyBoard}
             onKeyUp={handleKeyBoard}
             tabIndex={0}
-            className='position-relative'
+            className="position-relative"
           >
             {divHeight > 0 && divWidth > 0 && (
               <Stage
@@ -252,28 +256,27 @@ function Canvas(props: any) {
                   )}
                   {data.rects &&
                     data.rects.map((x: any) => {
-                      console.log(
-                        x.rect.x * aspectWidth,
-                        x.rect.y * aspectHeight,
-                        x.rect.width * aspectWidth,
-                        x.rect.height * aspectHeight
-                      );
+                      // console.log(
+                      //   x.left * aspectWidth,
+                      //   x.top * aspectHeight,
+                      //   x.width * aspectWidth,
+                      //   x.height * aspectHeight,
+                      //   x.id
+                      // );
                       return (
                         <Rect
                           key={x.id}
-                          x={x.rect.x * aspectWidth}
-                          y={x.rect.y * aspectHeight}
-                          width={x.rect.width * aspectWidth}
-                          height={x.rect.height * aspectHeight}
-                          fill={
-                            data.labels.find((l) => x.label === l.id)?.color
-                          }
+                          x={x.left * aspectWidth}
+                          y={x.top * aspectHeight}
+                          width={x.width * aspectWidth}
+                          height={x.height * aspectHeight}
+                          fill={data.labels.find((l) => x.label == l.id)?.color}
                           opacity={x.label === -1 ? 1 : 0.1}
                           fillEnabled={true}
                           shadowBlur={2}
                           dash={[2, 2]}
                           stroke={
-                            data.labels.find((l) => x.label === l.id)?.color
+                            data.labels.find((l) => x.label == l.id)?.color
                           }
                           dashEnabled={x.isSelected}
                           id={x.id}
@@ -287,16 +290,13 @@ function Canvas(props: any) {
             <div className="menu" ref={menuRef} tabIndex={0}>
               {contextRect && (
                 <ActionCard
-                  rect={contextRect}
+                  extraction={contextRect}
                   close={closeContext}
                   sessionId={props.id}
                 ></ActionCard>
               )}
             </div>
           </div>
-
-
-
         </>
       )}
     </>

@@ -5,7 +5,12 @@ import TopNavBar from './components/navbar/topnavbar';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
-import { IImage, ILabel } from './components/canvas/context/contextType';
+import {
+  IExtraction,
+  IImage,
+  ILabel,
+  IRecord,
+} from './components/canvas/context/contextType';
 import UploadComponent from './components/upload/upload';
 import LoadingComponent from './components/loading/loading';
 import Workspace from './components/workspace/workspace';
@@ -39,9 +44,64 @@ function App() {
       setDisplay(1);
       return;
     }
-    fetchData(sessionId);
+    // fetchData(sessionId);
+    fetchFromBE(sessionId);
     // loadFromLocal();
   }, []);
+  const fetchFromBE = async (id: string) => {
+    const recordData = await fetch(
+      import.meta.env.VITE_API_PREFIX + '/api/customer/' + id
+    );
+    if (!recordData.ok) {
+      sessionStorage.removeItem(lumenSessionId);
+      setDisplay(1);
+      return;
+    }
+    const data: IRecord = await recordData.json();
+    if (data) {
+      if (data.documents) {
+        const documents: IImage[] = [];
+        Object.keys(data.documents).forEach((key) => {
+          if (key === 'master') return;
+          documents.push(data.documents[key]);
+        });
+        const newDocuments: IImage[] = [];
+        for (const d of documents) {
+          const urlReq = await fetch(
+            `${import.meta.env.VITE_API_PREFIX}/api/documents/${id}/${d.page}`
+          );
+          const url = await urlReq.text();
+          newDocuments.push({
+            ...d,
+            displayUrl: url,
+          });
+        }
+        setDocument(newDocuments);
+      }
+      if (data.labels) {
+        const label: ILabel[] = [...labels];
+        Object.keys(data.labels).forEach((key) => {
+          label.push({
+            id: key,
+            text: data.labels[key].text,
+            color: data.labels[key].color,
+          });
+        });
+        setLabels(label);
+      }
+      if (data.extractions) {
+        const extractions: IExtraction[] = [];
+        Object.keys(data.extractions).forEach((key: string) => {
+          extractions.push({
+            ...data.extractions[key],
+            id: key,
+          });
+        });
+        setBoundingBoxes(extractions);
+      }
+      setDisplay(2);
+    }
+  };
   const loadFromLocal = async () => {
     const labels = await fetch(import.meta.env.VITE_API_PREFIX + 'labels').then(
       (data) => data.json()
@@ -63,7 +123,7 @@ function App() {
   };
   const fetchData = async (sessionId: string) => {
     const documentData: Array<IImage> = await fetch(
-      import.meta.env.VITE_API_PREFIX + '/api/upload?id=' + sessionId
+      import.meta.env.VITE_API_PREFIX + '/api/upload/' + sessionId
     )
       .then((data) => {
         if (data.ok) return data.json();
@@ -91,14 +151,10 @@ function App() {
         return;
       });
     const apilabels = await fetch(
-      import.meta.env.VITE_API_PREFIX + '/api/labels?id=' + sessionId
+      import.meta.env.VITE_API_PREFIX + '/api/labels/' + sessionId
     ).then((data) => data.json());
     const boundingBoxes = await fetch(
-      import.meta.env.VITE_API_PREFIX +
-        '/api/retrive_bbox?id=' +
-        sessionId +
-        '&page_no=' +
-        1
+      import.meta.env.VITE_API_PREFIX + '/api/extractions/' + sessionId
     ).then((data) => data.json());
     const labelDataSet = [
       ...labels,
@@ -120,26 +176,24 @@ function App() {
             height: x.height,
           },
           id: index + 1,
-          label: x.label_name
-            ? labelDataSet.find((l) => l.text === x.label_name).id
-            : 1,
-          text: x.ocr_text,
+          label: x.label,
+          extractedText: x.extractedText,
+          userText: x.userText,
           comment: x.comments,
         };
       });
-      console.log(newBoundingBoxes);
       setBoundingBoxes(newBoundingBoxes);
     }
     if (apilabels.length > 0) {
       setLabels(labelDataSet);
     }
-    console.log('Images=>', documentData);
     setDocument(documentData);
     setDisplay(2);
   };
   const uploadComplete = (id: string) => {
     sessionStorage.setItem(lumenSessionId, id);
-    fetchData(id);
+    // fetchData(id);
+    fetchFromBE(id);
   };
   const showUpload = () => {
     sessionStorage.removeItem(lumenSessionId);
@@ -170,7 +224,6 @@ function App() {
             sessionId={sessionStorage.getItem(lumenSessionId)}
             boundingBoxes={boundingBoxes}
             images={document}
-            page={1}
           ></Workspace>
         )}
       </Container>

@@ -10,6 +10,7 @@ import {
 import {
   CanvasContextProviderProps,
   CanvasContextReturnType,
+  IExtraction,
   ILabel,
   IRect,
 } from './contextType';
@@ -22,23 +23,23 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
   children,
 }) => {
   const [data, dispatch] = useReducer(reducer, {
-    rects: [],
+    extractions: [],
     labels: [],
     document: null,
-    page: 0,
+    page: 1,
   });
 
   const setInitialData = useCallback(
     (args: {
-      rects: Array<IRect>;
+      extractions: Array<IExtraction>;
       labels: Array<any>;
       document: any;
-      page?: number;
+      page: number;
     }) => {
       dispatch({
         type: ActionTypes.SET_INITIAL_DATA,
         payload: {
-          rects: args.rects,
+          extractions: args.extractions,
           labels: args.labels,
           document: args.document,
           page: args.page || 1,
@@ -48,41 +49,37 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     []
   );
 
-  const updateValues = useCallback((args: { rect: IRect }) => {
+  const updateValues = useCallback((args: IExtraction) => {
     dispatch({
       type: ActionTypes.UPDATE_LABEL_VALUE,
-      payload: {
-        rect: args.rect,
-      },
+      payload: args,
     });
   }, []);
 
-  const addRect = useCallback((args: { rect: IRect; text: string }) => {
+  const addRect = useCallback((args: IExtraction) => {
     dispatch({
       type: ActionTypes.ADD_RECT,
-      payload: {
-        rect: args.rect,
-        text: args.text,
-      },
+      payload: args,
     });
   }, []);
 
-  const selectRect = useCallback((args: { rect: any; isSelected: boolean }) => {
-    dispatch({
-      type: ActionTypes.SELECT_RECT,
-      payload: {
-        rect: args.rect,
-        isSelected: args.isSelected,
-      },
-    });
-  }, []);
+  const selectRect = useCallback(
+    (args: { extraction: IExtraction; isSelected: boolean }) => {
+      dispatch({
+        type: ActionTypes.SELECT_RECT,
+        payload: {
+          extraction: args.extraction,
+          isSelected: args.isSelected,
+        },
+      });
+    },
+    []
+  );
 
-  const removeRect = useCallback((args: { rect: IRect }) => {
+  const removeRect = useCallback((args: IExtraction) => {
     dispatch({
       type: ActionTypes.REMOVE_RECT,
-      payload: {
-        rect: args.rect,
-      },
+      payload: args,
     });
   }, []);
 
@@ -95,13 +92,10 @@ export const CanvasContextProvider: FC<CanvasContextProviderProps> = ({
     });
   }, []);
 
-  const updatePage = useCallback((args: { page: number; rects: IRect[] }) => {
+  const updatePage = useCallback((args: number) => {
     dispatch({
       type: ActionTypes.UPDATE_PAGE,
-      payload: {
-        page: args.page,
-        rects: args.rects,
-      },
+      payload: args,
     });
   }, []);
 
