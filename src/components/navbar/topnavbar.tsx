@@ -1,35 +1,43 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { AppBar, Box, Link, Toolbar, Typography } from '@mui/material';
+import { Plus } from 'react-feather';
+import { useLocation, useNavigate } from 'react-router-dom';
+import './topnavbar.scss';
 
-function TopNavBar(props) {
-  const clearSession = (e) => {
-    sessionStorage.removeItem('LumenSessionId');
-  };
+function TopNavBar() {
+  const nav = useLocation();
+  const navigate=useNavigate();
+  // identify the current route and display the appropriate button
+  console.log(nav.pathname);
+ 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow rounded m-0 p-0">
-      <Container fluid={true}>
-        <Navbar.Brand
-          href="https://www.eucloid.com/product/lumen-ai"
-          onClick={clearSession}
-        >
-          <img
-            src="assets/logo.svg"
-            width="120"
-            height="40"
-            className="d-inline-block align-top"
-            alt="React Bootstrap logo"
-          />
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/" onClick={clearSession}></Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" color={"transparent"}>
+        <Toolbar>
+          <img src='assets/logo.svg' className='logo'  />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+              flexGrow: 1,
+            }}
+          >
+            
+          </Typography>
+          {nav.pathname === '/' &&
+            <Link component="button" color="inherit" onClick={()=>navigate("/project")}><Plus />Create Project</Link>
+          }
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
 

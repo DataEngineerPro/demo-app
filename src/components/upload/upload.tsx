@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './upload.scss';
 import { Dropdown } from 'react-bootstrap';
 import LoadingComponent from '../loading/loading';
 import ContactForm from '../contact/contact';
 import { Upload } from 'react-feather';
+import { useParams } from 'react-router-dom';
 
 // drag drop file component
 function UploadComponent(props: any) {
@@ -11,9 +12,14 @@ function UploadComponent(props: any) {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showContact, setShowContact] = useState(props.showContact);
-  const [session_id, setSession_id] = useState<string>(null);
+  
+  const {projectId}= useParams();
+  const [session_id, setSession_id] = useState<string>("");
   // ref
   const inputRef = useRef(null);
+  const folderRef = useRef(null);
+
+  
 
   // handle drag events
   const handleDrag = function (e) {
@@ -59,7 +65,7 @@ function UploadComponent(props: any) {
       const formData = new FormData();
       formData.append('file', e.dataTransfer.files[0]);
       const response = await fetch(
-        import.meta.env.VITE_API_PREFIX + '/api/documents/' + session_id,
+        import.meta.env.VITE_API_PREFIX + '/api/documents/' + projectId,
         {
           method: 'POST',
           body: formData,
@@ -78,26 +84,19 @@ function UploadComponent(props: any) {
   // triggers when file is selected with click
   const handleChange = async (e) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files && e.target.files.length > 0) {
       // handleFiles(e.target.files);
       setLoading(true);
-      //check the size of file uploaded and show error if it is more than 2MB
-      if (
-        e.target.files[0].size >
-        import.meta.env.VITE_MAX_FILE_SIZE_IN_MB * 1024 * 1024
-      ) {
-        alert(
-          `File size should not be more than ${
-            import.meta.env.VITE_MAX_FILE_SIZE_IN_MB
-          }MB`
-        );
-        setLoading(false);
-        return;
-      }
+      
       const formData = new FormData();
-      formData.append('file', e.target.files[0]);
+      
+      // loop through the files and add them to the formData
+      for (let i = 0; i < e.target.files.length; i++) {
+        formData.append('files', e.target.files[i]);
+      }
+
       const response = await fetch(
-        import.meta.env.VITE_API_PREFIX + '/api/documents/' + session_id,
+        import.meta.env.VITE_API_PREFIX + '/api/documents/' + projectId,
         {
           method: 'POST',
           body: formData,
@@ -116,6 +115,9 @@ function UploadComponent(props: any) {
   // triggers the input when the button is clicked
   const onButtonClick = () => {
     inputRef.current.click();
+  };
+  const onFolderButtonClick = () => {
+    folderRef.current.click();
   };
 
   const formSubmit = (e) => {
@@ -149,9 +151,18 @@ function UploadComponent(props: any) {
               ref={inputRef}
               type="file"
               id="input-file-upload"
-              multiple={false}
               onChange={handleChange}
               accept="image/*,application/pdf"
+              multiple={true}
+            />
+            <input
+              ref={folderRef}
+              type="file"
+              id="input-folder-upload"
+              onChange={handleChange}
+              accept="image/*,application/pdf"
+              webkitdirectory="true"
+              mozdirectory="true"
             />
             <label
               id="label-file-upload"
@@ -181,8 +192,8 @@ function UploadComponent(props: any) {
                       Add File
                     </Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item disabled={true}>
-                      Add folders (available only in Pro version)
+                    <Dropdown.Item onClick={onFolderButtonClick}>
+                      Add folder
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>

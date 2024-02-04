@@ -12,8 +12,11 @@ import {
   IRecord,
 } from './components/canvas/context/contextType';
 import UploadComponent from './components/upload/upload';
-import LoadingComponent from './components/loading/loading';
 import Workspace from './components/workspace/workspace';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ProjectComponent from './pages/Project';
+import workspace from './components/workspace/workspace';
+import Project from './components/project/project';
 
 function App() {
   const lumenSessionId = 'LumenSessionId';
@@ -208,9 +211,9 @@ function App() {
 
   return (
     <>
-      <TopNavBar reset={reset}></TopNavBar>
+      
       <Container fluid={true} className="p-0">
-        {display === 0 && <LoadingComponent></LoadingComponent>}
+        {/* {display === 0 && <LoadingComponent></LoadingComponent>}
         {display === 1 && (
           <UploadComponent
             showContact={showContact}
@@ -224,8 +227,18 @@ function App() {
             sessionId={sessionStorage.getItem(lumenSessionId)}
             boundingBoxes={boundingBoxes}
             images={document}
-          ></Workspace>
-        )}
+          ></Workspace> */}
+
+        {/* )} */}
+        <BrowserRouter>
+        <TopNavBar ></TopNavBar>
+          <Routes>
+            <Route path="/" Component={ProjectComponent}/>
+            <Route path="/project" Component={Project}/>
+            <Route path="/:projectId/upload" Component={UploadComponent}/>
+            <Route path='/:projectId/workspace' Component={workspace}/>
+            </Routes>
+        </BrowserRouter>
       </Container>
     </>
   );
