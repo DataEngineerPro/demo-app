@@ -12,14 +12,14 @@ function UploadComponent(props: any) {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showContact, setShowContact] = useState(props.showContact);
-  
-  const {projectId}= useParams();
+
+  const { projectId } = useParams();
   const [session_id, setSession_id] = useState<string>("");
   // ref
   const inputRef = useRef(null);
   const folderRef = useRef(null);
 
-  
+
 
   // handle drag events
   const handleDrag = function (e) {
@@ -54,8 +54,7 @@ function UploadComponent(props: any) {
         import.meta.env.VITE_MAX_FILE_SIZE_IN_MB * 1024 * 1024
       ) {
         alert(
-          `File size should not be more than ${
-            import.meta.env.VITE_MAX_FILE_SIZE_IN_MB
+          `File size should not be more than ${import.meta.env.VITE_MAX_FILE_SIZE_IN_MB
           }MB`
         );
         setLoading(false);
@@ -72,8 +71,35 @@ function UploadComponent(props: any) {
         }
       );
       if (response.ok) {
-        const resp = await response.json();
-        props.uploadComplete(resp[0].id);
+        const resp = {
+          "documents": {
+            "1": {
+              "displayUrl": "https://lumenai-demo.s3.amazonaws.com/de2be97e-4406-4e53-a194-f38b5615ca15/entity_relationship_diagram_jpg",
+              "width": 1224,
+              "page": 1,
+              "url": "https://lumenai-demo.s3.amazonaws.com/de2be97e-4406-4e53-a194-f38b5615ca15/entity_relationship_diagram_jpg_bw.png",
+              "height": 816
+            },
+            "master": {
+              "url": "s3://lumenai-demo/de2be97e-4406-4e53-a194-f38b5615ca15/entity_relationship_diagram_jpg",
+              "page": "master"
+            }
+          },
+          "labels": {},
+          "createdAt": "2024-02-05T16:49:08.172Z",
+          "customer": {
+            "country": "India",
+            "workemail": "test@test.com",
+            "company": "test",
+            "fullname": "test",
+            "usecase": "test",
+            "phone": "1231231234"
+          },
+          "extractions": {},
+          "id": "de2be97e-4406-4e53-a194-f38b5615ca15"
+        };
+        //await response.json();
+        props.uploadComplete(resp.id);
       } else {
         setLoading(false);
         alert('Problem occured with upload, please try again');
@@ -87,9 +113,9 @@ function UploadComponent(props: any) {
     if (e.target.files && e.target.files.length > 0) {
       // handleFiles(e.target.files);
       setLoading(true);
-      
+
       const formData = new FormData();
-      
+
       // loop through the files and add them to the formData
       for (let i = 0; i < e.target.files.length; i++) {
         formData.append('files', e.target.files[i]);
@@ -140,9 +166,8 @@ function UploadComponent(props: any) {
           {loading && <LoadingComponent></LoadingComponent>}
           {showContact && <ContactForm submit={formsubmit}></ContactForm>}
           <form
-            className={`my-5 ${
-              loading || showContact ? 'visually-hidden' : ''
-            }`}
+            className={`my-5 ${loading || showContact ? 'visually-hidden' : ''
+              }`}
             id="form-file-upload"
             onDragEnter={handleDrag}
             onSubmit={formSubmit}

@@ -11,19 +11,32 @@ import LoadingComponent from '../loading/loading';
 import './workspace.scss';
 import IntroComponent from '../intro/intro';
 
-function Workspace({ boundingBoxes, labels, images, sessionId }) {
+function Workspace() {
   const { data, setInitialData, updatePage } = useCanvasContext();
   const [loading, setLoading] = useState(false);
   const [showBoundingBox, setShowBoundingBox] = useState<number | null>(null);
   const [maxHeight, setMaxHeight] = useState(0);
   const [page, setPage] = useState(1);
-  const [image, setImage] = useState(images.find((x) => x.page === page));
+  const sessionId = "temp";
+  const [image, setImage] = useState({
+    "displayUrl": "/assets/sample.png",
+    "width": 2550,
+    "page": 1,
+    "url": "https://lumenai-demo.s3.amazonaws.com/de2be97e-4406-4e53-a194-f38b5615ca15/entity_relationship_diagram_jpg_bw.png",
+    "height": 3301
+  });
   const [hintsEnabled, setHintsEnabled] = useState(false);
   useEffect(() => {
     setInitialData({
-      extractions: boundingBoxes,
-      labels: labels,
-      document: images,
+      extractions:[],
+      labels: [],
+      document: [{
+        "displayUrl": "/assets/sample.png",
+        "width": 2550,
+        "page": 1,
+        "url": "https://lumenai-demo.s3.amazonaws.com/de2be97e-4406-4e53-a194-f38b5615ca15/entity_relationship_diagram_jpg_bw.png",
+        "height": 3301
+      }],
       page: page || 1,
     });
     setTimeout(() => {
@@ -57,11 +70,11 @@ function Workspace({ boundingBoxes, labels, images, sessionId }) {
       <div className="ms-3 col-7 p-0">
         {!loading && (
           <Canvas
-            labels={labels}
-            extracions={boundingBoxes}
+            labels={[]}
+            extracions={[]}
             document={image}
             showUpload={false}
-            id={sessionId}
+            id={"temp"}
             openContextMenu={showBoundingBox}
             closeContextMenu={() => setShowBoundingBox(null)}
             updateHeight={updateHeight}
