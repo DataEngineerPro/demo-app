@@ -112,7 +112,6 @@ function TableRow(props: any) {
                   required
                   
                 /> */}
-
                 <TextareaAutosize
                   minRows={3}
                   onChange={(e) => setOcrValue(e.target.value)}

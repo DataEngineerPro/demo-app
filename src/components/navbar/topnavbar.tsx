@@ -1,35 +1,165 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { AppBar, Box, Link, Toolbar, Typography } from '@mui/material';
+import { Plus } from 'react-feather';
+import { useLocation, useNavigate } from 'react-router-dom';
+import './topnavbar.scss';
+import { Dropdown } from '@mui/base/Dropdown';
+import { Menu } from '@mui/base/Menu';
+import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
+import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
+import { styled } from '@mui/system';
 
-function TopNavBar(props) {
-  const clearSession = (e) => {
-    sessionStorage.removeItem('LumenSessionId');
+function TopNavBar() {
+  const nav = useLocation();
+  const navigate = useNavigate();
+  // identify the current route and display the appropriate button
+  console.log(nav.pathname);
+
+  const blue = {
+    50: '#F0F7FF',
+    100: '#C2E0FF',
+    200: '#99CCF3',
+    300: '#66B2FF',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E6',
+    700: '#0059B3',
+    800: '#004C99',
+    900: '#003A75',
   };
+  
+  const grey = {
+    50: '#F3F6F9',
+    100: '#E5EAF2',
+    200: '#DAE2ED',
+    300: '#C7D0DD',
+    400: '#B0B8C4',
+    500: '#9DA8B7',
+    600: '#6B7A90',
+    700: '#434D5B',
+    800: '#303740',
+    900: '#1C2025',
+  };
+
+  const Listbox = styled('ul')(
+    ({ theme }) => `
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+    padding: 6px;
+    margin: 12px 0;
+    min-width: 200px;
+    border-radius: 12px;
+    overflow: auto;
+    outline: 0px;
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+      };
+    z-index: 1;
+    `,
+  );
+
+  const MenuItem = styled(BaseMenuItem)(
+    ({ theme }) => `
+    list-style: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: default;
+    user-select: none;
+  
+    &:last-of-type {
+      border-bottom: none;
+    }
+  
+    &:focus {
+      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
+      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
+      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    }
+  
+    &.${menuItemClasses.disabled} {
+      color: ${theme.palette.mode === 'dark' ? grey[700] : grey[400]};
+    }
+    `,
+  );
+
+  const MenuButton = styled(BaseMenuButton)(
+    ({ theme }) => `
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    padding: 8px 16px;
+    margin: 0px 12px;
+    border-radius: 8px;
+    color: white;
+    transition: all 150ms ease;
+    cursor: pointer;
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  
+    &:hover {
+      background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
+      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
+    }
+  
+    &:active {
+      background: ${theme.palette.mode === 'dark' ? grey[700] : grey[100]};
+    }
+  
+    &:focus-visible {
+      box-shadow: 0 0 0 4px ${theme.palette.mode === 'dark' ? blue[300] : blue[200]};
+      outline: none;
+    }
+    `,
+  );
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow rounded m-0 p-0">
-      <Container fluid={true}>
-        <Navbar.Brand
-          href="https://www.eucloid.com/product/lumen-ai"
-          onClick={clearSession}
-        >
-          <img
-            src="assets/logo.svg"
-            width="120"
-            height="40"
-            className="d-inline-block align-top"
-            alt="React Bootstrap logo"
-          />
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/" onClick={clearSession}></Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" color={"transparent"}>
+        <Toolbar>
+          <img src='assets/logo.svg' className='logo' />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+              flexGrow: 1,
+            }}
+          >
+
+          </Typography>
+          {nav.pathname === '/' &&
+            <Link component="button" color="inherit" onClick={() => navigate("/project")}><Plus />Create Project</Link>
+          }
+          {nav.pathname.toLowerCase().indexOf('/workspace') > -1 &&
+            <>
+              <Link component="button" color="inherit" onClick={() => navigate("/temp/upload")}><Plus />Import Documents</Link>
+              <Dropdown>
+                <MenuButton>Export Model</MenuButton>
+                <Menu slots={{ listbox: Listbox }}>
+                  <MenuItem >YOLO</MenuItem>
+                  <MenuItem >
+                    Other
+                  </MenuItem>
+
+                </Menu>
+              </Dropdown>
+            </>
+          }
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
 
